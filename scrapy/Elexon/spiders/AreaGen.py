@@ -8,8 +8,7 @@ from datetime import date, timedelta
 class actualGenperTypespider(CSVFeedSpider):
 	name = "AreaGen"
 
-	STARTDATE = getattr(self, 'STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
-	ENDDATE = getattr(self, 'ENDDATE', (STARTDATE + timedelta(days=3).isoformat()))
+	
 
 	allowed_domains = 'bmreports.com'
 	custom_settings = {
@@ -20,10 +19,13 @@ class actualGenperTypespider(CSVFeedSpider):
 	delimiter = ','
 	headers = ['Record Type','Date','Period','CCGT','OIL','COAL','NUCLEAR','WIND','PS','NPSHYD','OCGT','OTHER','INTFR','INTIRL','INTNED','INTEW','BIOMASS']
 
-	if os.path.exists('../../../Main/csv/AreaGen ' + STARTDATE + '.csv'):
-		os.remove('../../../Main/csv/AreaGen ' + STARTDATE + '.csv')
-
 	def start_requests(self):
+
+		STARTDATE = getattr(self, 'STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
+		ENDDATE = getattr(self, 'ENDDATE', (STARTDATE + timedelta(days=3).isoformat()))
+
+		if os.path.exists('../../../Main/csv/AreaGen ' + STARTDATE + '.csv'):
+			os.remove('../../../Main/csv/AreaGen ' + STARTDATE + '.csv')
 
 		PORT = 443
 		VERSION_NUMBER = 'v1'
