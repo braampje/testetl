@@ -22,7 +22,7 @@ class actualGenperTypespider(CSVFeedSpider):
 	def start_requests(self):
 
 		STARTDATE = getattr(self, 'STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
-		ENDDATE = getattr(self, 'ENDDATE', (STARTDATE + timedelta(days=3).isoformat()))
+		ENDDATE = getattr(self, 'ENDDATE', (STARTDATE + timedelta(days=3)).isoformat())
 		self.custom_settings['FEED_URI'] = self.custom_settings['FEED_URI']  + STARTDATE + '.csv'
 
 		if os.path.exists('../../../Main/csv/AreaGen ' + STARTDATE + '.csv'):
