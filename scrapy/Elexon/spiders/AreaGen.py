@@ -8,23 +8,23 @@ from datetime import date, timedelta
 class actualGenperTypespider(CSVFeedSpider):
 	name = "AreaGen"
 
+	STARTDATE = getattr(self, 'STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
+	ENDDATE = getattr(self, 'ENDDATE', (STARTDATE + timedelta(days=3).isoformat()))
 
 	allowed_domains = 'bmreports.com'
 	custom_settings = {
-        'FEED_FORMAT': 'csv',
-        'FEED_URI': '/home/vagrant/dev/powerdb/Scrapers/Main/csv/AreaGen.csv'
+		'FEED_FORMAT': 'csv',
+		'FEED_URI': '../../../Main/csv/AreaGen ' + STARTDATE + '.csv'
     }
 	
 	delimiter = ','
 	headers = ['Record Type','Date','Period','CCGT','OIL','COAL','NUCLEAR','WIND','PS','NPSHYD','OCGT','OTHER','INTFR','INTIRL','INTNED','INTEW','BIOMASS']
 
-	if os.path.exists('/home/vagrant/dev/powerdb/Scrapers/Main/csv/AreaGen.csv'):
-		os.remove('/home/vagrant/dev/powerdb/Scrapers/Main/csv/AreaGen.csv')
+	if os.path.exists('../../../Main/csv/AreaGen ' + STARTDATE + '.csv'):
+		os.remove('../../../Main/csv/AreaGen ' + STARTDATE + '.csv')
 
 	def start_requests(self):
 
-		STARTDATE = getattr(self, 'STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
-		ENDDATE = getattr(self, 'ENDDATE', (date.today().isoformat()))
 		PORT = 443
 		VERSION_NUMBER = 'v1'
 		API_Key = '9urjhfmw814sqhn'
@@ -33,8 +33,6 @@ class actualGenperTypespider(CSVFeedSpider):
 
 		url = 'https://api.bmreports.com/BMRS/' + TYPE + '/' + VERSION_NUMBER + '?APIKey=' + API_Key
 		url = url  + '&ServiceType=' + SERVICETYPE + '&FromDate=' + STARTDATE + '&ToDate=' + ENDDATE
-		print(url)
-		print(STARTDATE)
 
 		yield scrapy.Request(url, self.parse)
 
