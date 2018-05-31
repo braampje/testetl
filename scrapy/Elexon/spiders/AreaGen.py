@@ -13,7 +13,7 @@ class actualGenperTypespider(CSVFeedSpider):
 	allowed_domains = 'bmreports.com'
 	custom_settings = {
 		'FEED_FORMAT': 'csv',
-		'FEED_URI': '../../../Main/csv/AreaGen ' + STARTDATE + '.csv'
+		'FEED_URI': '../../../Main/csv/AreaGen '
     }
 	
 	delimiter = ','
@@ -23,6 +23,7 @@ class actualGenperTypespider(CSVFeedSpider):
 
 		STARTDATE = getattr(self, 'STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
 		ENDDATE = getattr(self, 'ENDDATE', (STARTDATE + timedelta(days=3).isoformat()))
+		self.custom_settings['FEED_URI'] = self.custom_settings['FEED_URI']  + STARTDATE + '.csv'
 
 		if os.path.exists('../../../Main/csv/AreaGen ' + STARTDATE + '.csv'):
 			os.remove('../../../Main/csv/AreaGen ' + STARTDATE + '.csv')
