@@ -11,9 +11,6 @@ import sys
 
 areagen = pd.read_csv('csv/AreaGen_%s.csv' % sys.argv[1])
 
-# print(areagen.dtypes)
-# print(areagen.dtypes)
-
 # create dataset and clean
 dumper = pd.melt(areagen, id_vars=['Date', 'Period'], var_name='fuel')
 if dumper.Period.dtype == object:
@@ -25,9 +22,6 @@ if dumper.Period.dtype == object:
 dumper['area'] = 'Great Britain'
 dumper['source'] = 'ELEXON'
 
-# print(dumper.dtypes)
-# print(dumper)
-
 # create/open database connection
 conn, cur = SQL.connect()
 
@@ -37,13 +31,14 @@ dumper = SQL.common(conn, cur, dumper, 'fuel')
 dumper = SQL.common(conn, cur, dumper, 'area')
 dumper = SQL.common(conn, cur, dumper, 'source')
 
-
 dumper = SQL.Elexontime(dumper)
 
 tze = timezone('Europe/Amsterdam')
 dumper['dump_date'] = pd.to_datetime('now')
 dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
 dumper['period'] = pd.Timedelta('30 minutes')
+
+# print(dumper.head())
 
 SQL.dumpareaseries(conn, cur, dumper, 'actual_production')
 

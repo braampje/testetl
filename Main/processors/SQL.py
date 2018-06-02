@@ -5,10 +5,10 @@ import pandas.io.sql as psql
 import pandas as pd
 import io
 from pytz import timezone
-
+import sys
 
 def connect():
-	conn = pg.connect("dbname=power user=bram  host=localhost port=5432")
+	conn = pg.connect("dbname=power user=bram password=scraper1 host=localhost port=5432")
 	conn.autocommit = True
 	cur = conn.cursor()
 	return conn, cur
@@ -84,18 +84,12 @@ def common(conn, cur, data, cname):
 def Elexontime(data):
 	# transform Elexon period to start_time(UKtimezone)
 	tz = timezone('Europe/London')
+
 	data['Date'] = pd.to_datetime(data['Date'].astype(str), format='%Y%m%d')
+
 	data['start_time'] = data.Date.dt.tz_localize(tz)
-
-	# get summer/winter time dates and check if exist in current dataset
-	dates = pd.DataFrame(pd.to_datetime(tz._utc_transition_times[190:]), columns={'Date'})
-	dates['Date'] = dates['Date'].dt.date
-	dates = pd.merge(dates, data, on='Date', how='inner')
-
-	if dates.empty:
-		data['start_time'] = data.start_time + pd.to_timedelta((data['Period'] - 1) * 30, 'm')
-		# data['start_time'] = data['Date'] + pd.Timedelta(minutes=data['start_time'])
-	else:
-		print('Time Change!!!')
+	data['start_time'] = data.start_time.dt.tz_convert(timezone('UTC'))
+	data['start_time'] = data.start_time + pd.to_timedelta((data['Period'] - 1) * 30, 'm')
+	data['start_time'] = data.start_time.dt.tz_convert(tz)
 
 	return data
