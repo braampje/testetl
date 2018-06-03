@@ -6,6 +6,7 @@ import processors.SQL as SQL
 import time
 from pytz import timezone
 import sys
+import os
 
 # scraped data
 
@@ -42,6 +43,7 @@ dumper['period'] = pd.Timedelta('30 minutes')
 
 SQL.dumpareaseries(conn, cur, dumper, 'actual_production')
 
+os.remove('csv/AreaGen_%s.csv' % sys.argv[1])
 # end = time.time()
 
 # print(dumper.head(5))
