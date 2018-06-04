@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.bash_operator import bashOperator
+from airflow.operators.bash_operator import BashOperator
 from datetime import datetime, timedelta
 
 default_args = {
@@ -13,18 +13,17 @@ default_args = {
 	'email_on_retry': False,
 }
 
-
 dag = DAG(
-	'Elexon_Areagen_actual', default_args=default_args, schedule_interval(1))
+	'Elexon_Areagen_actual', default_args=default_args, schedule_interval=timedelta(1))
 
-t1 = bashOperator(
+t1 = BashOperator(
 	task_id='scraper',
-	bash_command='/home/bram/testetl/scrapy/scrapy crawl AreaGen -a STARTDATE=%(ds)s',
+	bash_command= 'cd /home/bram/testetl/scrapy && scrapy crawl AreaGen -a STARTDATE={{ ds }}',
 	dag=dag)
 
-t2 = bashOperator(
+t2 = BashOperator(
 	task_id='dumper',
-	bash_command='/home/bram/testetl/Main/python AreaGen_actual %(ds)s',
+	bash_command='cd /home/bram/testetl/Main && python AreaGen_actual.py {{ ds }}',
 	dag=dag)
 
 t1 >> t2
