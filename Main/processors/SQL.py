@@ -7,6 +7,7 @@ import io
 from pytz import timezone
 import sys
 
+
 def connect():
 	conn = pg.connect("dbname=power user=bram password=scraper1 host=localhost port=5432")
 	conn.autocommit = True
@@ -19,12 +20,12 @@ def readcommon(conn, cur, table):
 	return common
 
 
-def dumpcommon(conn, cur, cnew, table):
+def dumpcommon(conn, cur, cnew, columns, table):
 	# need to retrieve common type specific extra columns.
 	temp = io.StringIO()
 	cnew.to_csv(temp, index=False, header=False)
 	temp.seek(0)
-	cur.copy_from(file=temp, columns=[table], table='common.%s' % table)
+	cur.copy_from(file=temp, columns=table, table='common.%s' % table)
 	conn.commit()
 	print('new common %s added' % table)
 	print(cnew)
@@ -42,15 +43,15 @@ def dumpareaseries(conn, cur, data, table):
 	cur.execute("""CREATE TEMP TABLE dumper
 				AS
 				SELECT *
-				FROM area.actual_production
-				WITH NO DATA;""")
+				FROM area.%s
+				WITH NO DATA;""" % table)
 
 	cur.copy_from(file=temp, columns=areacol, sep=',', table='dumper')
 
-	cur.execute(""" INSERT INTO area.actual_production
+	cur.execute(""" INSERT INTO area.%s
 				select *
 				from dumper
-				ON CONFLICT DO NOTHING""")
+				ON CONFLICT DO NOTHING;""" % table)
 	cur.execute(""" DROP TABLE dumper;""")
 	# except pg.IntegrityError:
 	# print('already in database')
@@ -58,6 +59,28 @@ def dumpareaseries(conn, cur, data, table):
 	# conn.commit()
 	print('series dumped')
 	return None
+
+
+def dumpborderseries(conn, cur, data, table):
+	temp = io.stringIO()
+	bordercol = ['source_id', 'dump_date', 'start_time', 'period', 'border_id', 'value']
+	data.to_csv(temp, columns=bordercol, index=False, header=False)
+	temp.seek(0)
+	cur.execute("""CREATE TEMP TABLE dumpborder
+				AS
+				SELECT *
+				FROM border.%s
+				WITH NO DATA;""" % table)
+
+	cur.copy_from(file=temp, columns=bordercol, sep=',', table='dumpborder')
+
+	cur.execute("""INSERT INTO border.%s
+				select *
+				from dumpborder
+				on conflict do nothing;""" % table)
+	cur.execute("DROP TABLE dumpborder;")
+	print('series dumped')
+	pass
 
 
 def common(conn, cur, data, cname):
@@ -70,13 +93,56 @@ def common(conn, cur, data, cname):
 
 	if not newc.empty:
 		# if new fuel types found add to database and reread common data and merge
-		dumpcommon(conn, cur, newc, cname)
+		dumpcommon(conn, cur, newc, list(cname), cname)
 		ctype = readcommon(conn, cur, cname)
 	else:
 		print('no new %s' % cname)
 
 	data = pd.merge(data, ctype[[cname, 'id']], on=cname, how='left')
 	data.rename(columns={'id': '%s_id' % cname}, inplace=True)
+
+	return data
+
+
+def common_border(conn, cur, data, table_name):
+	# add new border ids to common_border and check if area exist in areas
+
+	# check for new areas and dump
+	newareas = pd.DataFrame(pd.unique(data[['area_from', 'area_to']].values.ravel('K')),
+							columns=['area'])
+	common(conn, cur, newareas, 'area')
+
+# check for new borders and dump
+	borders = readcommon(conn, cur, 'v_borders')
+
+	newborders = data['area_from', 'area_to'].groupby(['area_from', 'area_to'], as_index=False)
+	newborders = pd.merge(newborders, borders, how='left',
+							left_on=['area_from', 'area_to'],
+							right_on=['border_from', 'border_to'])
+	newborders = newborders[pd.isnull(newborders.border_from)][['area_from', 'area_to']]
+
+	if not newborders.empty:
+		# dump new borders
+		areas = readcommon(conn, cur, 'area')
+		newborders = pd.merge(newborders, areas[['id', 'area']], how='left',
+						left_on=['area_from'],
+						right_on=['area'])
+		newborders.rename(index=str, columns={'id': 'border_source_id'})
+		newborders = pd.merge(newborders, areas[['id', 'area']], how='left',
+						left_on=['area_to'],
+						right_on=['area'])
+		newborders.rename(index=str, columns={'id': 'border_target_id'})
+		newborders['area_function_id'] = 22
+		newborders = newborders[['area_function_id', 'border_source_id', 'border_target_id']]
+		dumpcommon(conn, cur, newborders, list(newborders), table_name)
+		borders = readcommon(conn, cur, 'v_borders')
+	else:
+		print('no new borders')
+
+	data = pd.merge(data, borders[['id', 'border_from', 'border_to']], how='left',
+							left_on=['area_from', 'area_to'],
+							right_on=['border_from', 'border_to'])
+	data.rename(columns={'id': 'border_id'}, inplace=True)
 
 	return data
 

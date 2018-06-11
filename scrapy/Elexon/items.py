@@ -7,6 +7,7 @@
 
 import scrapy
 
+
 class area_gen_fuel_type(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
@@ -26,3 +27,14 @@ class area_gen_fuel_type(scrapy.Item):
     pass
 
 
+class area_flows(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+
+    Date = scrapy.Field()
+    Period = scrapy.Field()
+    France = scrapy.Field()
+    Northern_Ireland = scrapy.Field()
+    Netherlands = scrapy.Field()
+    Ireland = scrapy.Field()
+    pass
