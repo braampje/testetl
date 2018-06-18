@@ -9,7 +9,7 @@ from dateutil.parser import parse
 
 class actualGenperTypespider(CSVFeedSpider):
 
-	name = "Flows"
+	name = "AreaFlow"
 	allowed_domains = 'bmreports.com'
 
 	delimiter = ','
