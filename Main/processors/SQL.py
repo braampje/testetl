@@ -1,4 +1,4 @@
-# create SQL connection and save main query functions
+	# create SQL connection and save main query functions
 
 import psycopg2 as pg
 import pandas.io.sql as psql
@@ -25,7 +25,7 @@ def dumpcommon(conn, cur, cnew, columns, table):
 	temp = io.StringIO()
 	cnew.to_csv(temp, index=False, header=False)
 	temp.seek(0)
-	cur.copy_from(file=temp, columns=table, table='common.%s' % table)
+	cur.copy_from(file=temp, columns=columns, sep=',',  table='common.%s' % table)
 	conn.commit()
 	print('new common %s added' % table)
 	print(cnew)
@@ -62,7 +62,7 @@ def dumpareaseries(conn, cur, data, table):
 
 
 def dumpborderseries(conn, cur, data, table):
-	temp = io.stringIO()
+	temp = io.StringIO()
 	bordercol = ['source_id', 'dump_date', 'start_time', 'period', 'border_id', 'value']
 	data.to_csv(temp, columns=bordercol, index=False, header=False)
 	temp.seek(0)
@@ -93,7 +93,7 @@ def common(conn, cur, data, cname):
 
 	if not newc.empty:
 		# if new fuel types found add to database and reread common data and merge
-		dumpcommon(conn, cur, newc, list(cname), cname)
+		dumpcommon(conn, cur, newc, cname, cname)
 		ctype = readcommon(conn, cur, cname)
 	else:
 		print('no new %s' % cname)
@@ -115,7 +115,7 @@ def common_border(conn, cur, data, table_name):
 # check for new borders and dump
 	borders = readcommon(conn, cur, 'v_borders')
 
-	newborders = data['area_from', 'area_to'].groupby(['area_from', 'area_to'], as_index=False)
+	newborders = data[['area_from', 'area_to']].drop_duplicates()
 	newborders = pd.merge(newborders, borders, how='left',
 							left_on=['area_from', 'area_to'],
 							right_on=['border_from', 'border_to'])
@@ -127,12 +127,14 @@ def common_border(conn, cur, data, table_name):
 		newborders = pd.merge(newborders, areas[['id', 'area']], how='left',
 						left_on=['area_from'],
 						right_on=['area'])
-		newborders.rename(index=str, columns={'id': 'border_source_id'})
+		newborders.rename(columns={'id': 'border_source_id'}, inplace=True)
 		newborders = pd.merge(newborders, areas[['id', 'area']], how='left',
 						left_on=['area_to'],
 						right_on=['area'])
-		newborders.rename(index=str, columns={'id': 'border_target_id'})
+#		print(newborders.head())
+		newborders.rename(columns={'id': 'border_target_id'}, inplace=True)
 		newborders['area_function_id'] = 22
+#		print(newborders.head())
 		newborders = newborders[['area_function_id', 'border_source_id', 'border_target_id']]
 		dumpcommon(conn, cur, newborders, list(newborders), table_name)
 		borders = readcommon(conn, cur, 'v_borders')

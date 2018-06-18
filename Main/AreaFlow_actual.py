@@ -20,7 +20,7 @@ if dumper.Period.dtype == object:
 	dumper['value'] = pd.to_numeric(dumper['value'])
 
 # add static data columns
-dumper['Area_to'] = 'Great Britain'
+dumper['area_to'] = 'Great Britain'
 dumper['source'] = 'ELEXON'
 
 # create/open database connection
@@ -42,11 +42,9 @@ dumper['period'] = pd.Timedelta('30 minutes')
 
 dumper = SQL.common_border(conn, cur, dumper, 'border_area')
 
-# print(dumper.head())
-
 SQL.dumpborderseries(conn, cur, dumper, 'flow_physical')
 
-# os.remove('csv/Flows_%s.csv' % sys.argv[1])
+os.remove('csv/Flows_%s.csv' % sys.argv[1])
 # end = time.time()
 
 # print(dumper.head(5))
@@ -59,5 +57,4 @@ SQL.dumpborderseries(conn, cur, dumper, 'flow_physical')
 # scrape data with scrapy
 # melt scraper to format of table with pandas in conversions
 # check for static data in db and dump if not complete
-# reformat data by replacing static data with IDs
-# dump data
+# reformat data by replacing static data
