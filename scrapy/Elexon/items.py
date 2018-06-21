@@ -46,6 +46,6 @@ class area_con_type(scrapy.Item):
 
     Date = scrapy.Field()
     Period = scrapy.Field()
-    Type = scrapy.Field()
+    consumption_type = scrapy.Field()
     value = scrapy.Field()
     pass

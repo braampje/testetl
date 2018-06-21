@@ -51,6 +51,6 @@ class actualConspider(CSVFeedSpider):
 		item = area_con_type()
 		item['Date'] = row['Date']
 		item['Period'] = row['Period']
-		item['Type'] = row['Record Type']
+		item['consumption_type'] = row['Record Type']
 		item['value'] = row['Demand']
 		return item
