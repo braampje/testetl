@@ -25,7 +25,7 @@ def dumpcommon(conn, cur, cnew, columns, table):
 	temp = io.StringIO()
 	cnew.to_csv(temp, index=False, header=False)
 	temp.seek(0)
-	cur.copy_from(file=temp, columns=columns, sep=',',  table='common.%s' % table)
+	cur.copy_from(file=temp, columns=columns, sep=',', table='common.%s' % table)
 	conn.commit()
 	print('new common %s added' % table)
 	print(cnew)
@@ -53,6 +53,34 @@ def dumpareaseries(conn, cur, data, table):
 				from dumper
 				ON CONFLICT DO NOTHING;""" % table)
 	cur.execute(""" DROP TABLE dumper;""")
+	# except pg.IntegrityError:
+	# print('already in database')
+
+	# conn.commit()
+	print('series dumped')
+	return None
+
+
+def dumpareaconseries(conn, cur, data, table):
+	temp = io.StringIO()
+	areacol = ['dump_date', 'area_id', 'start_time', 'period', 'source_id', 'value', 'type_id']
+	temp.seek(0)
+	# print(temp.read_csv())
+	# test2 = data[areacol]
+	# print(test2.dtypes)
+	cur.execute("""CREATE TEMP TABLE dumpcon
+				AS
+				SELECT *
+				FROM area.%s
+				WITH NO DATA;""" % table)
+
+	cur.copy_from(file=temp, columns=areacol, sep=',', table='dumpcon')
+
+	cur.execute(""" INSERT INTO area.%s
+				select *
+				from dumpcon
+				ON CONFLICT DO NOTHING;""" % table)
+	cur.execute(""" DROP TABLE dumpcon;""")
 	# except pg.IntegrityError:
 	# print('already in database')
 

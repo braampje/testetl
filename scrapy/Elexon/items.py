@@ -38,3 +38,14 @@ class area_flows(scrapy.Item):
     Netherlands = scrapy.Field()
     Ireland = scrapy.Field()
     pass
+
+
+class area_con_type(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+
+    Date = scrapy.Field()
+    Period = scrapy.Field()
+    Type = scrapy.Field()
+    value = scrapy.Field()
+    pass
