@@ -64,6 +64,7 @@ def dumpareaseries(conn, cur, data, table):
 def dumpareaconseries(conn, cur, data, table):
 	temp = io.StringIO()
 	areacol = ['dump_date', 'area_id', 'start_time', 'period', 'source_id', 'value', 'type_id']
+	data.to_csv(temp, columns=areacol, index=False, header=False)
 	temp.seek(0)
 	# print(temp.read_csv())
 	# test2 = data[areacol]
