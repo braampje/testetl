@@ -1,32 +1,32 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.spiders import CSVFeedSpider
-from Elexon.items import area_flows
+from Elexon.items import area_con_for_type
 import os
 from datetime import date, timedelta
 from dateutil.parser import parse
 
 
-class actualGenperTypespider(CSVFeedSpider):
+class Elexon_Con_Forecast_spider(CSVFeedSpider):
 
-	name = "AreaFlow"
+	name = "Elexon_AreaCon_Forecast"
 	allowed_domains = 'bmreports.com'
 
 	delimiter = ','
 	headers = [
-		'Record Tpe', 'Date', 'Period', 'FRANCE', 'NORTHERN_IRELAND', 'NETHERLANDS', 'IRELAND'
+		'Record Type', 'Date', 'Period', 'Zone', 'Published', 'Demand'
 	]
 
 	custom_settings = {
 		'FEED_FORMAT': 'csv',
-		'FEED_URI': '../Main/csv/Flows_%(STARTDATE)s.csv'
+		'FEED_URI': '../Main/csv/Elexon_AreaCon_forecast_%(STARTDATE)s.csv'
 	}
 
 	def start_requests(self):
 
 		VERSION_NUMBER = 'v1'
 		API_Key = '9urjhfmw814sqhn'
-		TYPE = 'INTERFUELHH'
+		TYPE = 'FORDAYDEM'
 		SERVICETYPE = 'CSV'
 
 		url = 'https://api.bmreports.com/BMRS/' + TYPE + '/' + VERSION_NUMBER + '?APIKey=' + API_Key
@@ -42,17 +42,15 @@ class actualGenperTypespider(CSVFeedSpider):
 		STARTD = parse(STARTD).date()
 		self.ENDDATE = kwargs.pop('STARTDATE', (STARTD + timedelta(days=3)).isoformat())
 
-		if os.path.exists('../Main/csv/Flows ' + self.STARTDATE + '.csv'):
-			os.remove('../Main/csv/Flows ' + self.STARTDATE + '.csv')
+		if os.path.exists('../Main/csv/Elexon_AreaCon_forecast_' + self.STARTDATE + '.csv'):
+			os.remove('../Main/csv/Elexon_AreaCon_forecast_' + self.STARTDATE + '.csv')
 
-		super(actualGenperTypespider, self).__init__(*args, **kwargs)
+		super(Elexon_Con_Forecast_spider, self).__init__(*args, **kwargs)
 
 	def parse_row(self, response, row):
-		item = area_flows()
+		item = area_con_for_type()
 		item['Date'] = row['Date']
 		item['Period'] = row['Period']
-		item['France'] = row['FRANCE']
-		item['Northern_Ireland'] = row['NORTHERN_IRELAND']
-		item['Netherlands'] = row['NETHERLANDS']
-		item['Ireland'] = row['IRELAND']
+		item['Runtype'] = row['Record Type']
+		item['value'] = row['Demand']
 		return item

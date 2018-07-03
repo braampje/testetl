@@ -24,9 +24,6 @@ class actualConspider(CSVFeedSpider):
 
 	def start_requests(self):
 
-		if os.path.exists('../Main/csv/AreaCon ' + self.STARTDATE + '.csv'):
-			os.remove('../Main/csv/AreaCon ' + self.STARTDATE + '.csv')
-
 		VERSION_NUMBER = 'v1'
 		API_Key = '9urjhfmw814sqhn'
 		TYPE = 'INDOITSDO'
@@ -44,6 +41,9 @@ class actualConspider(CSVFeedSpider):
 		self.STARTDATE = STARTD
 		STARTD = parse(STARTD).date()
 		self.ENDDATE = kwargs.pop('STARTDATE', (STARTD + timedelta(days=3)).isoformat())
+
+		if os.path.exists('../Main/csv/AreaCon_' + self.STARTDATE + '.csv'):
+			os.remove('../Main/csv/AreaCon_' + self.STARTDATE + '.csv')
 
 		super(actualConspider, self).__init__(*args, **kwargs)
 
