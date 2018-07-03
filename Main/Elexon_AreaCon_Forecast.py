@@ -29,7 +29,6 @@ con_types = {'DANF': 'NDF',
 			'DAIG': 'INDGEN'}
 
 dumper['runtype'].replace(con_types, inplace=True)
-
 # create/open database connection
 conn, cur = SQL.connect()
 

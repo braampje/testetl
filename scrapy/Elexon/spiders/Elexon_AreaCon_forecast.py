@@ -51,6 +51,6 @@ class Elexon_Con_Forecast_spider(CSVFeedSpider):
 		item = area_con_for_type()
 		item['Date'] = row['Date']
 		item['Period'] = row['Period']
-		item['Runtype'] = row['Record Type']
+		item['runtype'] = row['Record Type']
 		item['value'] = row['Demand']
 		return item
