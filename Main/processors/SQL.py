@@ -25,7 +25,7 @@ def dumpcommon(conn, cur, cnew, columns, table):
 	temp = io.StringIO()
 	cnew.to_csv(temp, index=False, header=False)
 	temp.seek(0)
-	cur.copy_from(file=temp, columns=columns, sep=',', table='common.%s' % table)
+	cur.copy_from(file=temp, columns=[columns], sep=',', table='common.%s' % table)
 	conn.commit()
 	print('new common %s added' % table)
 	print(cnew)
@@ -34,19 +34,21 @@ def dumpcommon(conn, cur, cnew, columns, table):
 
 def dumpareaseries(conn, cur, data, table):
 	temp = io.StringIO()
-	areacol = ['dump_date', 'start_time', 'period', 'area_id', 'fuel_id', 'source_id', 'value']
-	data.to_csv(temp, columns=areacol, index=False, header=False)
+	cur.execute("Select * from area.%s limit 0" % table)
+	colnames = [desc[0] for desc in cur.description]
+
+	data.to_csv(temp, columns=colnames, index=False, header=False)
 	temp.seek(0)
 	# print(temp.read_csv())
-	# test2 = data[areacol]
-	# print(test2.dtypes)
+	test2 = data[colnames]
+	print(test2.head())
 	cur.execute("""CREATE TEMP TABLE dumper
 				AS
 				SELECT *
 				FROM area.%s
 				WITH NO DATA;""" % table)
 
-	cur.copy_from(file=temp, columns=areacol, sep=',', table='dumper')
+	cur.copy_from(file=temp, columns=colnames, sep=',', table='dumper')
 
 	cur.execute(""" INSERT INTO area.%s
 				select *
@@ -63,7 +65,8 @@ def dumpareaseries(conn, cur, data, table):
 
 def dumpareaconseries(conn, cur, data, table):
 	temp = io.StringIO()
-	areacol = ['dump_date', 'area_id', 'start_time', 'period', 'source_id', 'value', 'consumption_type_id']
+	areacol = ['dump_date', 'area_id', 'start_time',
+				'period', 'source_id', 'value', 'consumption_type_id']
 	data.to_csv(temp, columns=areacol, index=False, header=False)
 	temp.seek(0)
 	# print(temp.read_csv())
