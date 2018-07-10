@@ -34,7 +34,7 @@ def dumpcommon(conn, cur, cnew, columns, table):
 
 def dumpseries(conn, cur, data, temptable, table):
 	temp = io.StringIO()
-	cur.execute("Select * from area.%s limit 0" % table)
+	cur.execute("Select * from %s limit 0" % table)
 	colnames = [desc[0] for desc in cur.description]
 
 	data.to_csv(temp, columns=colnames, index=False, header=False)

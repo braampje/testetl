@@ -21,6 +21,7 @@ if dumper.Period.dtype == object:
 # add static data columns
 dumper['area'] = 'Great Britain'
 dumper['source'] = 'ELEXON'
+dumper['consumption_type'] = 'INDO'
 
 # replace consumption ID names
 con_types = {'DANF': 'NDF',
@@ -37,6 +38,7 @@ conn, cur = SQL.connect()
 dumper = SQL.common(conn, cur, dumper, 'runtype')
 dumper = SQL.common(conn, cur, dumper, 'area')
 dumper = SQL.common(conn, cur, dumper, 'source')
+dumper = SQL.common(conn, cur, dumper, 'consumption_type')
 
 dumper = SQL.Elexontime(dumper)
 
