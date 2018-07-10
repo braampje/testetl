@@ -42,7 +42,7 @@ dumper['period'] = pd.Timedelta('30 minutes')
 
 # print(dumper.head())
 
-SQL.dumpareaseries(conn, cur, dumper, 'actual_production')
+SQL.dumpseries(conn, cur, dumper, 'Elexon_Areaprod', 'area.actual_production')
 
 os.remove('csv/AreaGen_%s.csv' % sys.argv[1])
 # end = time.time()

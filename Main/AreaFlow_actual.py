@@ -42,7 +42,7 @@ dumper['period'] = pd.Timedelta('30 minutes')
 
 dumper = SQL.common_border(conn, cur, dumper, 'border_area')
 
-SQL.dumpborderseries(conn, cur, dumper, 'flow_physical')
+SQL.dumpseries(conn, cur, dumper, 'Elexon_border', 'border.flow_physical')
 
 os.remove('csv/Flows_%s.csv' % sys.argv[1])
 # end = time.time()
