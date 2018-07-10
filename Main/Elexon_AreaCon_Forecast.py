@@ -47,7 +47,7 @@ dumper['period'] = pd.Timedelta('30 minutes')
 
 # print(dumper.head())
 
-SQL.dumpareaconseries(conn, cur, dumper, 'forecast_consumption')
+SQL.dumpseries(conn, cur, dumper, 'Elexon_AreaCon_forecast', 'area.forecast_consumption')
 
 os.remove('csv/Elexon_AreaCon_forecast_%s.csv' % sys.argv[1])
 # end = time.time()

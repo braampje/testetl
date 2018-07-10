@@ -32,7 +32,7 @@ def dumpcommon(conn, cur, cnew, columns, table):
 	return None
 
 
-def dumpareaseries(conn, cur, data, table):
+def dumpseries(conn, cur, data, temptable, table):
 	temp = io.StringIO()
 	cur.execute("Select * from area.%s limit 0" % table)
 	colnames = [desc[0] for desc in cur.description]
@@ -40,79 +40,25 @@ def dumpareaseries(conn, cur, data, table):
 	data.to_csv(temp, columns=colnames, index=False, header=False)
 	temp.seek(0)
 	# print(temp.read_csv())
-	test2 = data[colnames]
-	print(test2.head())
-	cur.execute("""CREATE TEMP TABLE dumper
+	cur.execute("""CREATE TEMP TABLE %s
 				AS
 				SELECT *
-				FROM area.%s
-				WITH NO DATA;""" % table)
+				FROM %s
+				WITH NO DATA;""" % (temptable, table))
 
-	cur.copy_from(file=temp, columns=colnames, sep=',', table='dumper')
+	cur.copy_from(file=temp, columns=colnames, sep=',', table=temptable)
 
-	cur.execute(""" INSERT INTO area.%s
+	cur.execute(""" INSERT INTO %s
 				select *
-				from dumper
-				ON CONFLICT DO NOTHING;""" % table)
-	cur.execute(""" DROP TABLE dumper;""")
+				from %s
+				ON CONFLICT DO NOTHING;""" % (table, temptable))
+	cur.execute(""" DROP TABLE %s;""" % temptable)
 	# except pg.IntegrityError:
 	# print('already in database')
 
 	# conn.commit()
 	print('series dumped')
 	return None
-
-
-def dumpareaconseries(conn, cur, data, table):
-	temp = io.StringIO()
-	areacol = ['dump_date', 'area_id', 'start_time',
-				'period', 'source_id', 'value', 'consumption_type_id']
-	data.to_csv(temp, columns=areacol, index=False, header=False)
-	temp.seek(0)
-	# print(temp.read_csv())
-	# test2 = data[areacol]
-	# print(test2.dtypes)
-	cur.execute("""CREATE TEMP TABLE dumpcon
-				AS
-				SELECT *
-				FROM area.%s
-				WITH NO DATA;""" % table)
-
-	cur.copy_from(file=temp, columns=areacol, sep=',', table='dumpcon')
-
-	cur.execute(""" INSERT INTO area.%s
-				select *
-				from dumpcon
-				ON CONFLICT DO NOTHING;""" % table)
-	cur.execute(""" DROP TABLE dumpcon;""")
-	# except pg.IntegrityError:
-	# print('already in database')
-
-	# conn.commit()
-	print('series dumped')
-	return None
-
-
-def dumpborderseries(conn, cur, data, table):
-	temp = io.StringIO()
-	bordercol = ['source_id', 'dump_date', 'start_time', 'period', 'border_id', 'value']
-	data.to_csv(temp, columns=bordercol, index=False, header=False)
-	temp.seek(0)
-	cur.execute("""CREATE TEMP TABLE dumpborder
-				AS
-				SELECT *
-				FROM border.%s
-				WITH NO DATA;""" % table)
-
-	cur.copy_from(file=temp, columns=bordercol, sep=',', table='dumpborder')
-
-	cur.execute("""INSERT INTO border.%s
-				select *
-				from dumpborder
-				on conflict do nothing;""" % table)
-	cur.execute("DROP TABLE dumpborder;")
-	print('series dumped')
-	pass
 
 
 def common(conn, cur, data, cname):
@@ -163,10 +109,9 @@ def common_border(conn, cur, data, table_name):
 		newborders = pd.merge(newborders, areas[['id', 'area']], how='left',
 						left_on=['area_to'],
 						right_on=['area'])
-#		print(newborders.head())
+# 		print(newborders.head())
 		newborders.rename(columns={'id': 'border_target_id'}, inplace=True)
 		newborders['area_function_id'] = 22
-#		print(newborders.head())
 		newborders = newborders[['area_function_id', 'border_source_id', 'border_target_id']]
 		dumpcommon(conn, cur, newborders, list(newborders), table_name)
 		borders = readcommon(conn, cur, 'v_borders')
