@@ -49,6 +49,7 @@ class Elexon_Con_Forecast_spider(CSVFeedSpider):
 
 	def parse_row(self, response, row):
 		item = area_con_for_type()
+		item['dump_date'] = row['Published']
 		item['Date'] = row['Date']
 		item['Period'] = row['Period']
 		item['runtype'] = row['Record Type']

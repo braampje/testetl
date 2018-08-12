@@ -55,6 +55,7 @@ class area_con_for_type(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
 
+    dump_date = scrapy.Field()
     Date = scrapy.Field()
     Period = scrapy.Field()
     runtype = scrapy.Field()

@@ -42,9 +42,8 @@ dumper = SQL.common(conn, cur, dumper, 'consumption_type')
 
 dumper = SQL.Elexontime(dumper)
 
-tze = timezone('Europe/Amsterdam')
-dumper['dump_date'] = pd.to_datetime('now')
-dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
+dumper['dump_date'] = pd.to_datetime(dumper['dump_date'].astype(str), format='%Y%m%d%H%M%S')
+dumper['dump_date'] = dumper.dump_date.dt.tz_localize(timezone('Europe/London'))
 dumper['period'] = pd.Timedelta('30 minutes')
 
 # print(dumper.head())
