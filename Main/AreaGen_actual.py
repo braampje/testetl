@@ -31,7 +31,6 @@ conn, cur = SQL.connect()
 dumper = SQL.common(conn, cur, dumper, 'fuel')
 dumper = SQL.common(conn, cur, dumper, 'area')
 dumper = SQL.common(conn, cur, dumper, 'source')
-dumper = SQL.common(conn, cur, dumper, 'consumption_type')
 
 dumper = SQL.Elexontime(dumper)
 
