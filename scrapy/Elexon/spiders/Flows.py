@@ -40,7 +40,7 @@ class actualGenperTypespider(CSVFeedSpider):
 		STARTD = kwargs.pop('STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
 		self.STARTDATE = STARTD
 		STARTD = parse(STARTD).date()
-		self.ENDDATE = kwargs.pop('STARTDATE', (STARTD + timedelta(days=3)).isoformat())
+		self.ENDDATE = kwargs.pop('ENDDATE', (STARTD + timedelta(days=3)).isoformat())
 
 		if os.path.exists('../Main/csv/Flows ' + self.STARTDATE + '.csv'):
 			os.remove('../Main/csv/Flows ' + self.STARTDATE + '.csv')
