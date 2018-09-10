@@ -21,15 +21,22 @@ if dumper.Period.dtype == object:
 # add static data columns
 dumper['area'] = 'Great Britain'
 dumper['source'] = 'ELEXON'
-dumper['consumption_type'] = 'INDO'
 
 # replace consumption ID names
-con_types = {'DANF': 'NDF',
+run_types = {'DANF': 'NDF',
 			'DATF': 'TSDF',
 			'DAID': 'INDDEM',
 			'DAIG': 'INDGEN'}
 
-dumper['runtype'].replace(con_types, inplace=True)
+dumper['runtype'].replace(run_types, inplace=True)
+
+con_types = {'NDF': 'INDO',
+			'TSDF': 'ITSDO',
+			'INDDEM': 'DEMschedule',
+			'INDGEN': 'GENschedule'}
+
+dumper['consumption_type'] = dumper['runtype']
+dumper['consumption_type'].replace(con_types, inplace=True)
 # create/open database connection
 conn, cur = SQL.connect()
 
@@ -43,7 +50,7 @@ dumper = SQL.common(conn, cur, dumper, 'consumption_type')
 dumper = SQL.Elexontime(dumper)
 
 dumper['dump_date'] = pd.to_datetime(dumper['dump_date'].astype(str), format='%Y%m%d%H%M%S')
-dumper['dump_date'] = dumper.dump_date.dt.tz_localize(timezone('Europe/London'))
+dumper['dump_date'] = dumper.dump_date.dt.tz_localize(timezone('UTC'))
 dumper['period'] = pd.Timedelta('30 minutes')
 
 # print(dumper.head())
