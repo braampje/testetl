@@ -61,23 +61,26 @@ def dumpseries(conn, cur, data, temptable, table):
 	return None
 
 
-def common(conn, cur, data, cname):
+def common(conn, cur, data, cname, ctable=None):
 	# add new common types to common data scheme
-	ctype = readcommon(conn, cur, cname)
+	if ctable is None:
+		ctable = cname
 
-	newc = pd.DataFrame(getattr(data, cname).unique(), columns=[cname])
-	newc = pd.merge(newc, ctype, on=cname, how='left')
-	newc = newc[pd.isnull(newc.id)][[cname]]
+	ctype = readcommon(conn, cur, ctable)
+
+	newc = pd.DataFrame(getattr(data, cname).unique(), columns=[ctable])
+	newc = pd.merge(newc, ctype, on=ctable, how='left')
+	newc = newc[pd.isnull(newc.id)][[ctable]]
 
 	if not newc.empty:
 		# if new fuel types found add to database and reread common data and merge
-		dumpcommon(conn, cur, newc, cname, cname)
-		ctype = readcommon(conn, cur, cname)
+		dumpcommon(conn, cur, newc, ctable, ctable)
+		ctype = readcommon(conn, cur, ctable)
 	else:
 		print('no new %s' % cname)
 
-	data = pd.merge(data, ctype[[cname, 'id']], on=cname, how='left')
-	data.rename(columns={'id': '%s_id' % cname}, inplace=True)
+	ctype.rename(columns={ctable: cname, 'id': '%s_id' % cname}, inplace=True)
+	data = pd.merge(data, ctype[[cname, '%s_id' % cname]], on=cname, how='left')
 
 	return data
 
