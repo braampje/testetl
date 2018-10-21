@@ -33,8 +33,7 @@ class unit_dynamicspider(XMLFeedSpider):
 		SERVICETYPE = 'XML'
 
 		url = 'https://api.bmreports.com/BMRS/' + TYPE + '/' + VERSION_NUMBER + '?APIKey=' + API_Key
-		url = url + '&ServiceType=' + SERVICETYPE + '&SettlementDate=' + self.STARTDATE
-		# + '&NGCBMUnitName=CRUA-1'
+		url = url + '&ServiceType=' + SERVICETYPE + '&SettlementDate=' + self.STARTDATE + '&NGCBMUnitName=STAY-3'
 
 		yield scrapy.Request(url, self.parse)
 
@@ -52,7 +51,7 @@ class unit_dynamicspider(XMLFeedSpider):
 		item = unit_dynamic()
 		item['unit_dynamic_type'] = node.xpath('recordType/text()').extract()
 		item['unit'] = node.xpath('ngcBMUnitName/text()').extract()
-		item['bmUnitID'] = node.xpath('bmUnitID/text()').extract()
+		item['bmunitid'] = node.xpath('bmUnitID/text()').extract()
 		item['company'] = node.xpath('leadPartyName/text()').extract()
 		item['unit_type'] = node.xpath('bMUnitType/text()').extract()
 		item['dump_date'] = node.xpath('effectiveTime/text()').extract()

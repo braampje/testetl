@@ -18,7 +18,7 @@ def main():
 	# print(dumper.head())
 
 	dumper = dumper.melt(
-		id_vars=['Company', 'dump_date', 'unit_dynamic_type', 'unit', 'bmUnitID', 'unit_type'],
+		id_vars=['company', 'dump_date', 'unit_dynamic_type', 'unit', 'bmunitid', 'unit_type'],
 		var_name='unit_dynamic_subtype')
 
 	dumper = dumper[pd.notnull(dumper['value'])]
@@ -35,7 +35,7 @@ def main():
 	# format/convert columns to database ids etc and check if static data is complete
 	dumper = SQL.common(conn, cur, dumper, 'source')
 	dumper = SQL.common(conn, cur, dumper, 'unit_dynamic_type')
-	dumper = SQL.common(conn, cur, dumper, 'unit_dynamic_subtype', common_table='unit_dynamic_type')
+	dumper = SQL.common(conn, cur, dumper, 'unit_dynamic_subtype', ctable='unit_dynamic_type')
 
 	dumper['dump_date'] = pd.to_datetime(dumper['dump_date'])
 	dumper['dump_date'] = dumper.dump_date.dt.tz_localize(timezone('UTC'))
@@ -45,7 +45,7 @@ def main():
 		dumper['area'] = 'Great Britain'
 
 		dumper = get_fuel(dumper)
-		dumper['fuel']
+		# dumper = dumper['fuel']
 		dumper = SQL.common(conn, cur, dumper, 'area')
 		dumper = SQL.common(conn, cur, dumper, 'fuel')
 
@@ -56,15 +56,15 @@ def main():
 					'T': 5}
 
 		dumper['unit_type'].replace(unit_type, inplace=True)
-		dumper.rename(columns={'unit_type': 'unit_function_id'})
+		dumper.rename(columns={'unit_type': 'unit_function_id'}, inplace=True)
 
 	else:
 		units = SQL.readcommon(conn, cur, 'unit')
 		units.rename(columns={'id': 'unit_id'}, inplace=True)
 		dumper = pd.merge(dumper, units[['unit', 'unit_id']], on='unit', how='left')
 
-	# print(dumper.head())
-
+	print(dumper.head())
+	# print(dumper)
 	SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_dynamic', 'unit.dynamic')
 
 	os.remove('csv/Elexon_AreaCon_forecast_%s.csv' % sys.argv[1])
@@ -75,13 +75,13 @@ def unit_test(conn, cur, data):
 	# check if there are any new units
 	new = False
 	cunit = SQL.readcommon(conn, cur, 'unit')
-	units = pd.DataFrame(getattr(data, 'unit').unique(), columns='unit')
+	units = pd.DataFrame(data['unit'].unique(), columns=['unit'])
 	units = pd.merge(units, cunit, on='unit', how='left')
 	units = units[pd.isnull(units.id)][['unit']]
-
-	if not cunit.empty:
+	# print(units.head())
+	if not units.empty:
 		new = True
-
+	print(new)
 	return new
 
 
@@ -147,7 +147,9 @@ def get_fuel(data):
 
 	fuel = pd.read_excel(tmp_f.name)
 
-	fuel.rename(columns={'NGC_BMU_ID': 'fuel'}, inplace=True)
+	fuel.rename(columns={'NGC_BMU_ID': 'unit', 'FUEL TYPE': 'fuel'}, inplace=True)
+	# print(data.head())
+	# print(fuel.head())
 	data = pd.merge(data, fuel, on='unit', how='left')
 	data['fuel'].fillna(value='Unknown', inplace=True)
 	return data

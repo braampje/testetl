@@ -66,7 +66,7 @@ class area_con_for_type(scrapy.Item):
 class unit_dynamic(scrapy.Item):
     unit_dynamic_type = scrapy.Field()
     unit = scrapy.Field()
-    bmUnitID = scrapy.Field()
+    bmunitid = scrapy.Field()
     dump_date = scrapy.Field()
     company = scrapy.Field()
     unit_type = scrapy.Field()
