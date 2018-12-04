@@ -14,7 +14,7 @@ class actualGenperTypespider(CSVFeedSpider):
 
 	delimiter = ','
 	headers = [
-		'Record Tpe', 'Date', 'Period', 'FRANCE', 'NORTHERN_IRELAND', 'NETHERLANDS', 'IRELAND'
+		'Record Tpe', 'Date', 'Period', 'FRANCE', 'NORTHERN_IRELAND', 'NETHERLANDS', 'IRELAND', 'BELGIUM'
 	]
 
 	custom_settings = {
@@ -55,4 +55,5 @@ class actualGenperTypespider(CSVFeedSpider):
 		item['Northern_Ireland'] = row['NORTHERN_IRELAND']
 		item['Netherlands'] = row['NETHERLANDS']
 		item['Ireland'] = row['IRELAND']
+		item['Belgium'] = row['BELGIUM']
 		return item

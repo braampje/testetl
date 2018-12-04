@@ -37,6 +37,7 @@ class area_flows(scrapy.Item):
     Northern_Ireland = scrapy.Field()
     Netherlands = scrapy.Field()
     Ireland = scrapy.Field()
+    Belgium = scrapy.Field()
     pass
 
 

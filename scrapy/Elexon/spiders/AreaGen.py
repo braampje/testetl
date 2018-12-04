@@ -15,7 +15,7 @@ class actualGenperTypespider(CSVFeedSpider):
 	delimiter = ','
 	headers = [
 		'Record Type', 'Date', 'Period', 'CCGT', 'OIL', 'COAL', 'NUCLEAR', 'WIND', 'PS',
-		'NPSHYD', 'OCGT', 'OTHER', 'INTFR', 'INTIRL', 'INTNED', 'INTEW', 'BIOMASS'
+		'NPSHYD', 'OCGT', 'OTHER', 'INTFR', 'INTIRL', 'INTNED', 'INTEW', 'BIOMASS', 'INTNEM'
 	]
 
 	custom_settings = {
