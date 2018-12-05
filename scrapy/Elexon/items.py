@@ -62,3 +62,15 @@ class area_con_for_type(scrapy.Item):
     runtype = scrapy.Field()
     value = scrapy.Field()
     pass
+
+
+class unit_dynamic(scrapy.Item):
+    Record = scrapy.Field()
+    Unit = scrapy.Field()
+    Date = scrapy.Field()
+    Value1 = scrapy.Field()
+    Value2 = scrapy.Field()
+    Value3 = scrapy.Field()
+    Value4 = scrapy.Field()
+    Value5 = scrapy.Field()
+    pass
