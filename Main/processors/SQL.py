@@ -25,7 +25,7 @@ def dumpcommon(conn, cur, cnew, columns, table):
 	temp = io.StringIO()
 	cnew.to_csv(temp, index=False, header=False)
 	temp.seek(0)
-	cur.copy_from(file=temp, columns=[columns], sep=',', table='common.%s' % table)
+	cur.copy_from(file=temp, columns=columns, sep=',', table='common.%s' % table)
 	conn.commit()
 	print('new common %s added' % table)
 	print(cnew)
@@ -74,7 +74,7 @@ def common(conn, cur, data, cname, ctable=None):
 
 	if not newc.empty:
 		# if new fuel types found add to database and reread common data and merge
-		dumpcommon(conn, cur, newc, ctable, ctable)
+		dumpcommon(conn, cur, newc, list(ctable), ctable)
 		ctype = readcommon(conn, cur, ctable)
 	else:
 		print('no new %s' % cname)
@@ -117,8 +117,10 @@ def common_border(conn, cur, data, table_name):
 # 		print(newborders.head())
 		newborders.rename(columns={'id': 'border_target_id'}, inplace=True)
 		newborders['area_function_id'] = 22
+		print(newborders)
 		newborders = newborders[['area_function_id', 'border_source_id', 'border_target_id']]
-		dumpcommon(conn, cur, newborders, list(newborders), table_name)
+		print(newborders.columns)
+		dumpcommon(conn, cur, newborders, newborders.columns, table_name)
 		borders = readcommon(conn, cur, 'v_borders')
 	else:
 		print('no new borders')
