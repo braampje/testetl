@@ -36,13 +36,10 @@ class Elexon_Con_Forecast_spider(CSVFeedSpider):
 		yield scrapy.Request(url, self.parse)
 
 	def __init__(self, *args, **kwargs):
-		print(kwargs)
 		STARTD = kwargs.pop('STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
 		self.STARTDATE = STARTD
 		STARTD = parse(STARTD).date()
-		print(kwargs)
-		self.ENDDATE = kwargs.pop('ENDDATE', (STARTD + timedelta(days=3)).isoformat())
-		print(self.ENDDATE)
+		self.ENDDATE = kwargs.pop('ENDDATE', (STARTD + timedelta(days=5)).isoformat())
 		if os.path.exists('../Main/csv/Elexon_AreaCon_forecast_' + self.STARTDATE + '.csv'):
 			os.remove('../Main/csv/Elexon_AreaCon_forecast_' + self.STARTDATE + '.csv')
 
