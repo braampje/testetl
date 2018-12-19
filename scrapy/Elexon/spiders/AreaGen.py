@@ -20,7 +20,7 @@ class actualGenperTypespider(CSVFeedSpider):
 
 	custom_settings = {
 		'FEED_FORMAT': 'csv',
-		'FEED_URI': '../Main/csv/AreaGen_%(STARTDATE)s.csv'
+		'FEED_URI': '../Main/csv/AreaGen_%(STARTD)s.csv'
 	}
 
 	def start_requests(self):
@@ -38,9 +38,10 @@ class actualGenperTypespider(CSVFeedSpider):
 
 	def __init__(self, *args, **kwargs):
 
-		STARTD = kwargs.pop('STARTDATE', (date.today() + timedelta(days=-3)).isoformat())
-		self.STARTDATE = STARTD
+		STARTD = kwargs.pop('STARTDATE', (date.today() + timedelta(days=-2)).isoformat())
+		self.STARTD = STARTD
 		STARTD = parse(STARTD).date()
+		self.STARTDATE = (STARTD + timedelta(days=-1)).isoformat()
 		self.ENDDATE = kwargs.pop('ENDDATE', (STARTD + timedelta(days=3)).isoformat())
 
 		if os.path.exists('../Main/csv/AreaGen_' + self.STARTDATE + '.csv'):
