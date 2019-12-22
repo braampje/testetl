@@ -13,6 +13,7 @@ default_args = {
     'email_on_retry': False,
 }
 
+
 dag = DAG(
     'Elexon_Areacon_actual', default_args=default_args, schedule_interval=timedelta(1))
 
