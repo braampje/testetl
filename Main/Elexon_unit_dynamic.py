@@ -37,7 +37,7 @@ def main():
     dumper = SQL.common(conn, cur, dumper, 'source')
     dumper = SQL.common(conn, cur, dumper, 'unit_dynamic_type')
     dumper = SQL.common(conn, cur, dumper,
-                        'unit_dynamic_subtype', ctable='unit_dynamic_type')
+                        'unit_dynamic_subtype', common_table='unit_dynamic_type')
 
     dumper['dump_date'] = pd.to_datetime(dumper['dump_date'])
     dumper['dump_date'] = dumper.dump_date.dt.tz_localize(timezone('UTC'))
