@@ -59,6 +59,7 @@ def main():
 
         dumper['unit_type'].replace(unit_type, inplace=True)
         dumper.rename(columns={'unit_type': 'unit_function_id'}, inplace=True)
+        dumper = SQL.common2(conn, cur, dumper, 'unit')
 
     else:
         units = SQL.readcommon(conn, cur, 'unit')
