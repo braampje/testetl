@@ -43,17 +43,17 @@ def dumpseries(conn, cur, data, temptable, table):
     temp.seek(0)
     # print(temp.read_csv())
     cur.execute("""CREATE TEMP TABLE %s
-				AS
-				SELECT *
-				FROM %s
-				WITH NO DATA;""" % (temptable, table))
+                AS
+                SELECT *
+                FROM %s
+                WITH NO DATA;""" % (temptable, table))
 
     cur.copy_from(file=temp, columns=colnames, sep=',', table=temptable)
 
     cur.execute(""" INSERT INTO %s
-				select *
-				from %s
-				ON CONFLICT DO NOTHING;""" % (table, temptable))
+                select *
+                from %s
+                ON CONFLICT DO NOTHING;""" % (table, temptable))
     cur.execute(""" DROP TABLE %s;""" % temptable)
     # except pg.IntegrityError:
     # print('already in database')
@@ -70,8 +70,10 @@ def common(conn, cur, data, common_column, common_table=None):
 
     common_current = readcommon(conn, cur, common_table)
 
-    common_new = pd.DataFrame(getattr(data, common_column).unique(), columns=[common_table])
-    common_new = pd.merge(common_new, common_current, on=common_table, how='left')
+    common_new = pd.DataFrame(
+        getattr(data, common_column).unique(), columns=[common_table])
+    common_new = pd.merge(common_new, common_current,
+                          on=common_table, how='left')
     common_new = common_new[pd.isnull(common_new.id)][[common_table]]
 
     if not common_new.empty:
@@ -81,9 +83,10 @@ def common(conn, cur, data, common_column, common_table=None):
     else:
         print('no new %s' % common_column)
 
-    common_current.rename(columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
+    common_current.rename(
+        columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
     data = pd.merge(data, common_current[[common_column, '%s_id' %
-                                 common_column]], on=common_column, how='left')
+                                          common_column]], on=common_column, how='left')
 
     return data
 
@@ -95,14 +98,15 @@ def common2(conn, cur, data, common_column, common_table=None):
 
     common_current = readcommon(conn, cur, common_table)
 
-    #get only columns in frame that exist in the common table
+    # get only columns in frame that exist in the common table
     colnames = [col for col in common_current.columns]
     common_new = data.loc[:, data.columns.isin(colnames)]
     print(common_new.head())
 
 # get the column from new data unique values and check create dataframe with new ones in structure of SQL table
-    common_new = common_new.drop_duplicates
-    common_new = pd.merge(common_new, common_current[[common_table,'id']], on=common_table, how='left')
+    common_new = common_new.drop_duplicates()
+    common_new = pd.merge(
+        common_new, common_current[[common_table, 'id']], on=common_table, how='left')
     common_new = common_new[pd.isnull(common_new.id)]
 
     if not common_new.empty:
@@ -110,15 +114,17 @@ def common2(conn, cur, data, common_column, common_table=None):
 
         #common_new = common_new.reindex(columns=[*common_new.columns.tolist(), *colnames])
         print(colnames)
-        #common_new = pd.merge(common_new, data[*colnames], on common_table, how='left')
-        dumpcommon(conn, cur, common_new, list(common_new.columns), common_table)
+        # common_new = pd.merge(common_new, data[*colnames], on common_table, how='left')
+        dumpcommon(conn, cur, common_new, list(
+            common_new.columns), common_table)
         common_current = readcommon(conn, cur, common_table)
     else:
         print('no new %s' % common_column)
 
-    common_current.rename(columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
+    common_current.rename(
+        columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
     data = pd.merge(data, common_current[[common_column, '%s_id' %
-                                 common_column]], on=common_column, how='left')
+                                          common_column]], on=common_column, how='left')
 
     return data
 
@@ -153,7 +159,7 @@ def common_border(conn, cur, data, table_name):
         newborders = pd.merge(newborders, areas[['id', 'area']], how='left',
                               left_on=['area_to'],
                               right_on=['area'])
-# 		print(newborders.head())
+#       print(newborders.head())
         newborders.rename(columns={'id': 'border_target_id'}, inplace=True)
         newborders['area_function_id'] = 22
         print(newborders)
