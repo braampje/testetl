@@ -15,9 +15,9 @@ areagen = pd.read_csv('csv/AreaGen_%s.csv' % sys.argv[1])
 # create dataset and clean
 dumper = pd.melt(areagen, id_vars=['Date', 'Period'], var_name='fuel')
 if dumper.Period.dtype == object:
-	dumper = dumper[dumper['Period'] != 'Period']
-	dumper['Period'] = pd.to_numeric(dumper['Period'])
-	dumper['value'] = pd.to_numeric(dumper['value'])
+    dumper = dumper[dumper['Period'] != 'Period']
+    dumper['Period'] = pd.to_numeric(dumper['Period'])
+    dumper['value'] = pd.to_numeric(dumper['value'])
 
 # add static data columns
 dumper['area'] = 'Great Britain'

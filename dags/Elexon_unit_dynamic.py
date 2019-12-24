@@ -14,17 +14,17 @@ default_args = {
 }
 
 dag = DAG(
-    'Elexon_Area_forecastCon', default_args=default_args,
-    schedule_interval='@hourly', catchup=False)
+    'Elexon_unit_dynamic', default_args=default_args,
+    schedule_interval='@daily', catchup=False)
 
 t1 = BashOperator(
     task_id='scraper',
-    bash_command='cd /home/bram/testetl/scrapy && scrapy crawl Elexon_AreaCon_Forecast -a STARTDATE={{ ds }}',
+    bash_command='cd /home/bram/testetl/scrapy && scrapy crawl Elexon_unit_dynamic -a STARTDATE={{ ds }}',
     dag=dag)
 
 t2 = BashOperator(
     task_id='dumper',
-    bash_command='cd /home/bram/testetl/Main && python Elexon_AreaCon_Forecast.py {{ ds }}',
+    bash_command='cd /home/bram/testetl/Main && python Elexon_unit_dynamic.py {{ ds }}',
     dag=dag)
 
 t1 >> t2

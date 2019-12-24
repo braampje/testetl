@@ -10,15 +10,16 @@ import os
 
 # scraped data
 
-data = pd.read_csv('csv/Flows_%s.csv' % sys.argv[1]).fillna(value=0, downcast='infer')
-#print(data.head())
-#print(data.dtypes)
+data = pd.read_csv('csv/Flows_%s.csv' %
+                   sys.argv[1]).fillna(value=0, downcast='infer')
+# print(data.head())
+# print(data.dtypes)
 # create dataset and clean
 dumper = pd.melt(data, id_vars=['Date', 'Period'], var_name='area_from')
 if dumper.Period.dtype == object:
-	dumper = dumper[dumper['Period'] != 'Period']
-	dumper['Period'] = pd.to_numeric(dumper['Period'])
-	dumper['value'] = pd.to_numeric(dumper['value'])
+    dumper = dumper[dumper['Period'] != 'Period']
+    dumper['Period'] = pd.to_numeric(dumper['Period'])
+    dumper['value'] = pd.to_numeric(dumper['value'])
 
 # add static data columns
 dumper['area_to'] = 'Great Britain'
@@ -42,7 +43,7 @@ dumper = SQL.Elexontime(dumper)
 dumper['period'] = pd.Timedelta('30 minutes')
 
 dumper = SQL.common_border(conn, cur, dumper, 'border_area')
-#print(dumper.head())
+# print(dumper.head())
 SQL.dumpseries(conn, cur, dumper, 'Elexon_border', 'border.flow_physical')
 
 os.remove('csv/Flows_%s.csv' % sys.argv[1])
