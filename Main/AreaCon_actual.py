@@ -14,9 +14,9 @@ dumper = pd.read_csv('csv/AreaCon_%s.csv' % sys.argv[1])
 
 # create dataset and clean
 if dumper.Period.dtype == object:
-	dumper = dumper[dumper['Period'] != 'Period']
-	dumper['Period'] = pd.to_numeric(dumper['Period'])
-	dumper['value'] = pd.to_numeric(dumper['value'])
+    dumper = dumper[dumper['Period'] != 'Period']
+    dumper['Period'] = pd.to_numeric(dumper['Period'])
+    dumper['value'] = pd.to_numeric(dumper['value'])
 
 # add static data columns
 dumper['area'] = 'Great Britain'
@@ -40,7 +40,8 @@ dumper['period'] = pd.Timedelta('30 minutes')
 
 # print(dumper.head())
 
-SQL.dumpseries(conn, cur, dumper, 'Elexon_actual_consumtion', 'area.actual_consumption')
+SQL.dumpseries(conn, cur, dumper, 'Elexon_actual_consumtion',
+               'area.actual_consumption')
 
 os.remove('csv/AreaCon_%s.csv' % sys.argv[1])
 # end = time.time()
