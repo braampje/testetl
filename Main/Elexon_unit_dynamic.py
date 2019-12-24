@@ -23,7 +23,7 @@ def main():
         var_name='unit_dynamic_subtype')
 
     dumper = dumper[pd.notnull(dumper['value'])]
-
+    dumper = dumper.astype({'value': int})
     # print(dumper)
 
     # add static data columns
@@ -67,7 +67,6 @@ def main():
         dumper = pd.merge(
             dumper, units[['unit', 'unit_id']], on='unit', how='left')
 
-    print(dumper.head())
     # print(dumper)
     SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_dynamic', 'unit.dynamic')
 
@@ -85,7 +84,6 @@ def unit_test(conn, cur, data):
     # print(units.head())
     if not units.empty:
         new = True
-    print(new)
     return new
 
 
