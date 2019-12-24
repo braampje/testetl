@@ -33,7 +33,7 @@ class unit_dynamicspider(XMLFeedSpider):
 		SERVICETYPE = 'XML'
 
 		url = 'https://api.bmreports.com/BMRS/' + TYPE + '/' + VERSION_NUMBER + '?APIKey=' + API_Key
-		url = url + '&ServiceType=' + SERVICETYPE + '&SettlementDate=' + self.STARTDATE + '&NGCBMUnitName=STAY-3'
+		url = url + '&ServiceType=' + SERVICETYPE + '&SettlementDate=' + self.STARTDATE + '&NGCBMUnitName=*'
 
 		yield scrapy.Request(url, self.parse)
 
