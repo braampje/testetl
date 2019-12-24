@@ -70,7 +70,7 @@ def main():
     # print(dumper)
     SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_dynamic', 'unit.dynamic')
 
-    os.remove('csv/Elexon_AreaCon_forecast_%s.csv' % sys.argv[1])
+    os.remove('csv/Elexon_unit_dynamic_%s.csv' % sys.argv[1])
     # end = time.time()
 
 
