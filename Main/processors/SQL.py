@@ -63,35 +63,35 @@ def dumpseries(conn, cur, data, temptable, table):
     return None
 
 
+# def common(conn, cur, data, common_column, common_table=None):
+#     # add new common types to common data scheme
+#     if common_table is None:
+#         common_table = common_column
+
+#     common_current = readcommon(conn, cur, common_table)
+
+#     common_new = pd.DataFrame(
+#         getattr(data, common_column).unique(), columns=[common_table])
+#     common_new = pd.merge(common_new, common_current,
+#                           on=common_table, how='left')
+#     common_new = common_new[pd.isnull(common_new.id)][[common_table]]
+
+#     if not common_new.empty:
+#         # if new fuel types found add to database and reread common data and merge
+#         dumpcommon(conn, cur, common_new, list(common_table), common_table)
+#         common_current = readcommon(conn, cur, common_table)
+#     else:
+#         print('no new %s' % common_column)
+
+#     common_current.rename(
+#         columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
+#     data = pd.merge(data, common_current[[common_column, '%s_id' %
+#                                           common_column]], on=common_column, how='left')
+
+#     return data
+
+
 def common(conn, cur, data, common_column, common_table=None):
-    # add new common types to common data scheme
-    if common_table is None:
-        common_table = common_column
-
-    common_current = readcommon(conn, cur, common_table)
-
-    common_new = pd.DataFrame(
-        getattr(data, common_column).unique(), columns=[common_table])
-    common_new = pd.merge(common_new, common_current,
-                          on=common_table, how='left')
-    common_new = common_new[pd.isnull(common_new.id)][[common_table]]
-
-    if not common_new.empty:
-        # if new fuel types found add to database and reread common data and merge
-        dumpcommon(conn, cur, common_new, list(common_table), common_table)
-        common_current = readcommon(conn, cur, common_table)
-    else:
-        print('no new %s' % common_column)
-
-    common_current.rename(
-        columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
-    data = pd.merge(data, common_current[[common_column, '%s_id' %
-                                          common_column]], on=common_column, how='left')
-
-    return data
-
-
-def common2(conn, cur, data, common_column, common_table=None):
     # add new common types to common data scheme
     if common_table is None:
         common_table = common_column
