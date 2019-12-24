@@ -152,6 +152,8 @@ def get_fuel(data):
 
     fuel.rename(columns={'NGC_BMU_ID': 'unit',
                          'FUEL TYPE': 'fuel'}, inplace=True)
+
+    fuel.loc[:, 'fuel'] = fuel.fuel.str.upper()
     # print(data.head())
     # print(fuel.head())
     data = pd.merge(data, fuel, on='unit', how='left')
@@ -167,7 +169,7 @@ test = resp.content
 
 tmp_f = NamedTemporaryFile(delete=False)
 with open(tmp_f.name, 'wb') as fhh:
-	fhh.write(resp.content)
+    fhh.write(resp.content)
 
 fueler = pd.read_excel(tmp_f.name)
 
