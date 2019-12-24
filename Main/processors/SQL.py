@@ -101,7 +101,6 @@ def common2(conn, cur, data, common_column, common_table=None):
     # get only columns in frame that exist in the common table
     colnames = [col for col in common_current.columns]
     common_new = data.loc[:, data.columns.isin(colnames)]
-    print(common_new.head())
 
 # get the column from new data unique values and check create dataframe with new ones in structure of SQL table
     common_new = common_new.drop_duplicates()
@@ -114,7 +113,6 @@ def common2(conn, cur, data, common_column, common_table=None):
         # if new fuel types found add to database and reread common data and merge
 
         #common_new = common_new.reindex(columns=[*common_new.columns.tolist(), *colnames])
-        print(colnames)
         # common_new = pd.merge(common_new, data[*colnames], on common_table, how='left')
         dumpcommon(conn, cur, common_new, list(
             common_new.columns), common_table)
