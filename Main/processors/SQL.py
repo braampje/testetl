@@ -21,16 +21,16 @@ def readcommon(conn, cur, table):
     return common
 
 
-def dumpcommon(conn, cur, cnew, columns, table):
+def dumpcommon(conn, cur, common_new, columns, table):
     # need to retrieve common type specific extra columns.
     temp = io.StringIO()
-    cnew.to_csv(temp, index=False, header=False)
+    common_new.to_csv(temp, index=False, header=False)
     temp.seek(0)
     cur.copy_from(file=temp, columns=columns,
                   sep=',', table='common.%s' % table)
     conn.commit()
     print('new common %s added' % table)
-    print(cnew)
+    print(common_new)
     return None
 
 
@@ -63,56 +63,62 @@ def dumpseries(conn, cur, data, temptable, table):
     return None
 
 
-def common(conn, cur, data, cname, ctable=None):
+def common(conn, cur, data, common_column, common_table=None):
     # add new common types to common data scheme
-    if ctable is None:
-        ctable = cname
+    if common_table is None:
+        common_table = common_column
 
-    ctype = readcommon(conn, cur, ctable)
+    common_current = readcommon(conn, cur, common_table)
 
-    newc = pd.DataFrame(getattr(data, cname).unique(), columns=[ctable])
-    newc = pd.merge(newc, ctype, on=ctable, how='left')
-    newc = newc[pd.isnull(newc.id)][[ctable]]
+    common_new = pd.DataFrame(getattr(data, common_column).unique(), columns=[common_table])
+    common_new = pd.merge(common_new, common_current, on=common_table, how='left')
+    common_new = common_new[pd.isnull(common_new.id)][[common_table]]
 
-    if not newc.empty:
+    if not common_new.empty:
         # if new fuel types found add to database and reread common data and merge
-        dumpcommon(conn, cur, newc, list(ctable), ctable)
-        ctype = readcommon(conn, cur, ctable)
+        dumpcommon(conn, cur, common_new, list(common_table), common_table)
+        common_current = readcommon(conn, cur, common_table)
     else:
-        print('no new %s' % cname)
+        print('no new %s' % common_column)
 
-    ctype.rename(columns={ctable: cname, 'id': '%s_id' % cname}, inplace=True)
-    data = pd.merge(data, ctype[[cname, '%s_id' %
-                                 cname]], on=cname, how='left')
+    common_current.rename(columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
+    data = pd.merge(data, common_current[[common_column, '%s_id' %
+                                 common_column]], on=common_column, how='left')
 
     return data
 
 
-def common2(conn, cur, data, cname, ctable=None):
+def common2(conn, cur, data, common_column, common_table=None):
     # add new common types to common data scheme
-    if ctable is None:
-        ctable = cname
+    if common_table is None:
+        common_table = common_column
 
-    ctype = readcommon(conn, cur, ctable)
+    common_current = readcommon(conn, cur, common_table)
 
-    newc = pd.DataFrame(getattr(data, cname).unique(), columns=[ctable])
-    newc = pd.merge(newc, ctype, on=ctable, how='left')
-    newc = newc[pd.isnull(newc.id)][[ctable]]
+    #get only columns in frame that exist in the common table
+    colnames = [col for col in common_current.columns]
+    common_new = data.loc[:, data.columns.isin(colnames)]
+    print(common_new.head())
 
-    if not newc.empty:
+# get the column from new data unique values and check create dataframe with new ones in structure of SQL table
+    common_new = common_new.drop_duplicates
+    common_new = pd.merge(common_new, common_current[[common_table,'id']], on=common_table, how='left')
+    common_new = common_new[pd.isnull(common_new.id)]
+
+    if not common_new.empty:
         # if new fuel types found add to database and reread common data and merge
-        colnames = [col for col in ctype.columns]
-        #newc = newc.reindex(columns=[*newc.columns.tolist(), *colnames])
-        print(colnames)
-        newc = pd.merge(newc, data[*colnames], on ctable, how='left')
-        dumpcommon(conn, cur, newc, list(ctable), ctable)
-        ctype = readcommon(conn, cur, ctable)
-    else:
-        print('no new %s' % cname)
 
-    ctype.rename(columns={ctable: cname, 'id': '%s_id' % cname}, inplace=True)
-    data = pd.merge(data, ctype[[cname, '%s_id' %
-                                 cname]], on=cname, how='left')
+        #common_new = common_new.reindex(columns=[*common_new.columns.tolist(), *colnames])
+        print(colnames)
+        #common_new = pd.merge(common_new, data[*colnames], on common_table, how='left')
+        dumpcommon(conn, cur, common_new, list(common_new.columns), common_table)
+        common_current = readcommon(conn, cur, common_table)
+    else:
+        print('no new %s' % common_column)
+
+    common_current.rename(columns={common_table: common_column, 'id': '%s_id' % common_column}, inplace=True)
+    data = pd.merge(data, common_current[[common_column, '%s_id' %
+                                 common_column]], on=common_column, how='left')
 
     return data
 
