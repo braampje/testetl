@@ -108,6 +108,7 @@ def common2(conn, cur, data, common_column, common_table=None):
     common_new = pd.merge(
         common_new, common_current[[common_table, 'id']], on=common_table, how='left')
     common_new = common_new[pd.isnull(common_new.id)]
+    common_new = common_new.drop('id', axis=1)
 
     if not common_new.empty:
         # if new fuel types found add to database and reread common data and merge
