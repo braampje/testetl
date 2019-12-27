@@ -14,11 +14,11 @@ class unit_generationspider(XMLFeedSpider):
     itertag = 'item'
     iterator = 'xml'
 
-#	delimiter = ','
+#   delimiter = ','
 
-#	headers = [
-#		'Record Type', 'BMunitid', 'Date', 'value1', 'value2', 'value3', 'value4', 'value5'
-#	]
+#   headers = [
+#       'Record Type', 'BMunitid', 'Date', 'value1', 'value2', 'value3', 'value4', 'value5'
+#   ]
 
     custom_settings = {
         'FEED_FORMAT': 'csv',
@@ -58,21 +58,21 @@ class unit_generationspider(XMLFeedSpider):
         item['company'] = node.xpath('leadPartyName/text()').extract()
         item['unit_type'] = node.xpath('bMUnitType/text()').extract()
         item['start_time'] = node.xpath('timeFrom/text()').extract()
-
         item['end_time'] = node.xpath('timeTo/text()').extract()
-        if item['runtype'] == 'PN':
+        #print(True if not node.xpath('qpnLevelFrom/text()').extract() else False)
+        if node.xpath('pnLevelFrom/text()').extract():
             item['value_from'] = node.xpath('pnLevelFrom/text()').extract()
             item['value_to'] = node.xpath('pnLevelTo/text()').extract()
-        elif item['runtype'] == 'QPN':
+        elif node.xpath('qpnLevelFrom/text()').extract():
             item['value_from'] = node.xpath('qpnLevelFrom/text()').extract()
             item['value_to'] = node.xpath('qpnLevelTo/text()').extract()
-        elif item['runtype'] == 'MEL':
+        elif node.xpath('melLevelFrom/text()').extract():
             item['value_from'] = node.xpath('melLevelFrom/text()').extract()
             item['value_to'] = node.xpath('melLevelTo/text()').extract()
-        elif item['runtype'] == 'MIL':
+        elif node.xpath('milLevelFrom/text()').extract():
             item['value_from'] = node.xpath('milLevelFrom/text()').extract()
             item['value_to'] = node.xpath('milLevelTo/text()').extract()
-        elif item['runtype'] == 'BOALF':
+        elif node.xpath('bidOfferLevelFrom/text()').extract():
             item['value_from'] = node.xpath(
                 'bidOfferLevelFrom/text()').extract()
             item['value_to'] = node.xpath('bidOfferLevelTo/text()').extract()
