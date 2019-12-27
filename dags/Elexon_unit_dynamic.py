@@ -15,7 +15,7 @@ default_args = {
 
 dag = DAG(
     'Elexon_unit_dynamic', default_args=default_args,
-    schedule_interval='@daily', catchup=False)
+    schedule_interval='@daily')
 
 t1 = BashOperator(
     task_id='scraper',

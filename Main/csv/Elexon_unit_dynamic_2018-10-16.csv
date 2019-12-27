@@ -1,9 +1,0 @@
-MDP,MDV,MNZT,MZT,NDB,NDO,NDZ,RDR1,RDR2,RDR3,RDelbow2,RDelbow3,RUR1,RUR2,RUR3,RUelbow2,RUelbow3,SEL,SIL,bmunitid,company,dump_date,unit,unit_dynamic_type,unit_type
-,,,,,,,,,,,,17.5,0.4,17.5,175,180,,,T_STAY-3,RWE Generation UK plc,2018-10-12 06:44:00,STAY-3,RURE,T
-,,,,,,,17.5,41.0,11.0,125,43,,,,,,,,T_STAY-3,RWE Generation UK plc,2018-05-30 14:24:00,STAY-3,RDRE,T
-,,,,,,58.000,,,,,,,,,,,,,T_STAY-3,RWE Generation UK plc,2018-10-12 06:44:00,STAY-3,NDZ,T
-,,,,2.000,,,,,,,,,,,,,,,T_STAY-3,RWE Generation UK plc,2018-05-30 14:24:00,STAY-3,NDB,T
-,,,,,2.000,,,,,,,,,,,,,,T_STAY-3,RWE Generation UK plc,2018-05-30 14:24:00,STAY-3,NDO,T
-,,,360.000,,,,,,,,,,,,,,,,T_STAY-3,RWE Generation UK plc,2018-05-30 14:24:00,STAY-3,MZT,T
-,,360.000,,,,,,,,,,,,,,,,,T_STAY-3,RWE Generation UK plc,2018-10-12 06:44:00,STAY-3,MNZT,T
-,,,,,,,,,,,,,,,,,195.000,,T_STAY-3,RWE Generation UK plc,2018-05-30 14:24:00,STAY-3,SEL,T
