@@ -13,6 +13,7 @@ class unit_generationspider(XMLFeedSpider):
     allowed_domains = 'bmreports.com'
     itertag = 'item'
     iterator = 'xml'
+    download_timeout = 600
 
 #   delimiter = ','
 
