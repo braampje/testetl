@@ -64,6 +64,8 @@ def main():
     BOALF = BOALF.astype({'value_from': int, 'value_to': int,'acceptance_id': int,'bo_flag': bool,'rr_instruction_flag': bool,'rr_schedule_flag':bool,'so_flag':bool,'stor_flag':bool})
     dumper.loc[:,'acceptance_time'] = pd.to_datetime(dumper.acceptance_time)
     BOALF.rename(columns={'acceptance_time': 'trade_date','acceptance_id':'trade_id','bo_flag':'bo','rr_instruction_flag':'rr_instruction','rr_schedule_flag':'rr_schedule'}, inplace=True)
+
+    print(BOALF.dtypes)
     SQL.dumpseries(conn, cur, dumper, 'Elexon_BOALF','unit.BOALF')
 
     os.remove('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
