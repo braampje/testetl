@@ -15,7 +15,7 @@ from tempfile import NamedTemporaryFile
 
 def main():
     dumper = pd.read_csv('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
-
+    conn, cur = SQL.connect()
     # transform all mutual columns
     dumper['source'] = 'ELEXON'
     dumper = SQL.common(conn, cur, dumper, 'source')
@@ -29,7 +29,6 @@ def main():
         np.timedelta64(1, 'm'), unit='m')
 
 
-    conn, cur = SQL.connect()
     dumper = Elexon.unit(conn, cur, dumper)
 
     # split to two table insert dataframes
