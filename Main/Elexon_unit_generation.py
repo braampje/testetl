@@ -16,6 +16,8 @@ from tempfile import NamedTemporaryFile
 def main():
     dumper = pd.read_csv('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
     BOALF = dumper.loc[dumper.runtype == 'BOALF', :]
+    print(BOALF.head())
+    # Dump all normal generation data
     dumper = dumper.loc[dumper.runtype != 'BOALF', :]
     # print(dumper.head())
     dumper['value'] = pd.mean(dumper.value_from, dumper.value_to)
@@ -45,7 +47,9 @@ def main():
     # check if new units are available, if yes, gather necessary data
 
     # print(dumper)
-    SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_generation','unit.generation')
+    #SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_generation','unit.generation')
+
+    #dump bid offer acceptances in database
 
     os.remove('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
     # end = time.time()
