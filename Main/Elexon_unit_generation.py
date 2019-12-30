@@ -23,29 +23,27 @@ def main():
     tze = timezone('Europe/Amsterdam')
     dumper['dump_date'] = pd.to_datetime('now')
     dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
-    dumper.loc[:,'end_time'] = pd.to_datetime(dumper.end_time)
+    dumper.loc[:, 'end_time'] = pd.to_datetime(dumper.end_time)
     dumper.loc[:, 'start_time'] = pd.to_datetime(dumper.start_time)
-    dumper['period'] = pd.to_timedelta((dumper.end_time - dumper.start_time) / \
-        np.timedelta64(1, 'm'), unit='m')
-
+    dumper['period'] = pd.to_timedelta((dumper.end_time - dumper.start_time) /
+                                       np.timedelta64(1, 'm'), unit='m')
 
     dumper = Elexon.unit(conn, cur, dumper)
 
     # split to two table insert dataframes
     BOALF = dumper.loc[dumper.runtype == 'BOALF', :]
-    print(BOALF.head(),BOALF.dtypes)
+    print(BOALF.head(), BOALF.dtypes)
     # Dump all normal generation data
     dumper = dumper.loc[dumper.runtype != 'BOALF', :]
     # print(dumper.head())
 
     # get all data to database except BOALF
-    dumper['value'] = dumper[['value_from','value_to']].mean(axis=1)
+    dumper['value'] = dumper[['value_from', 'value_to']].mean(axis=1)
     dumper = dumper.astype({'value': int})
     dumper = dumper[dumper.value != 0]
     # print(dumper)
 
     # add static data columns
-
 
     # create/open database connection
 
@@ -53,20 +51,21 @@ def main():
     # start = time.time()
     # format/convert columns to database ids etc and check if static data is complete
 
-
-
     # check if new units are available, if yes, gather necessary data
 
     # print(dumper)
-    SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_generation','unit.generation')
+    SQL.dumpseries(conn, cur, dumper,
+                   'Elexon_unit_generation', 'unit.generation')
 
-    #dump bid offer acceptances in database
-    BOALF = BOALF.astype({'value_from': int, 'value_to': int,'acceptance_id': int,'bo_flag': bool,'rr_instruction_flag': bool,'rr_schedule_flag':bool,'so_flag':bool,'stor_flag':bool})
-    dumper.loc[:,'acceptance_time'] = pd.to_datetime(dumper.acceptance_time)
-    BOALF.rename(columns={'acceptance_time': 'trade_date','acceptance_id':'trade_id','bo_flag':'bo','rr_instruction_flag':'rr_instruction','rr_schedule_flag':'rr_schedule'}, inplace=True)
+    # dump bid offer acceptances in database
+    BOALF = BOALF.astype({'value_from': int, 'value_to': int, 'acceptance_id': int, 'bo_flag': bool,
+                          'rr_instruction_flag': bool, 'rr_schedule_flag': bool, 'so_flag': bool, 'stor_flag': bool})
+    BOALF.loc[:, 'acceptance_time'] = pd.to_datetime(BOALF.acceptance_time)
+    BOALF.rename(columns={'acceptance_time': 'trade_date', 'acceptance_id': 'trade_id', 'bo_flag': 'bo',
+                          'rr_instruction_flag': 'rr_instruction', 'rr_schedule_flag': 'rr_schedule'}, inplace=True)
 
-    print(BOALF.dtypes)
-    SQL.dumpseries(conn, cur, dumper, 'Elexon_BOALF','unit.BOALF')
+    #print(BOALF.dtypes)
+    SQL.dumpseries(conn, cur, BOALF, 'Elexon_BOALF', 'unit.boalf')
 
     os.remove('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
     # end = time.time()
