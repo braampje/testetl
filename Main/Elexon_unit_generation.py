@@ -32,7 +32,6 @@ def main():
 
     # split to two table insert dataframes
     BOALF = dumper.loc[dumper.runtype == 'BOALF', :]
-    print(BOALF.head(), BOALF.dtypes)
     # Dump all normal generation data
     dumper = dumper.loc[dumper.runtype != 'BOALF', :]
     # print(dumper.head())
@@ -58,13 +57,15 @@ def main():
                    'Elexon_unit_generation', 'unit.generation')
 
     # dump bid offer acceptances in database
+    BOALF.loc[:, ['bo_flag', 'rr_instruction_flag', 'rr_schedule_flag',
+                  'so_flag', 'stor_flag']].replace({'T': True, 'F': False}, inplace=True)
     BOALF = BOALF.astype({'value_from': int, 'value_to': int, 'acceptance_id': int, 'bo_flag': bool,
                           'rr_instruction_flag': bool, 'rr_schedule_flag': bool, 'so_flag': bool, 'stor_flag': bool})
     BOALF.loc[:, 'acceptance_time'] = pd.to_datetime(BOALF.acceptance_time)
     BOALF.rename(columns={'acceptance_time': 'trade_date', 'acceptance_id': 'trade_id', 'bo_flag': 'bo',
                           'rr_instruction_flag': 'rr_instruction', 'rr_schedule_flag': 'rr_schedule'}, inplace=True)
 
-    #print(BOALF.dtypes)
+    print(BOALF.dtypes, BOALF.head())
     SQL.dumpseries(conn, cur, BOALF, 'Elexon_BOALF', 'unit.boalf')
 
     os.remove('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
