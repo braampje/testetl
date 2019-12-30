@@ -4,7 +4,7 @@
 import pandas as pd
 import requests
 from tempfile import NamedTemporaryFile
-import SQL
+import processors.SQL as SQL
 
 
 def unit(conn, cur, dumper):

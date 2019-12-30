@@ -1,6 +1,6 @@
 # compare for all common tables if static data is complete vs scraped data
 # and dump new timeseries data
-
+import numpy as np
 import pandas as pd
 import processors.SQL as SQL
 import processors.Elexon as Elexon
@@ -15,41 +15,57 @@ from tempfile import NamedTemporaryFile
 
 def main():
     dumper = pd.read_csv('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
+
+    # transform all mutual columns
+    dumper['source'] = 'ELEXON'
+    dumper = SQL.common(conn, cur, dumper, 'source')
+    dumper = SQL.common(conn, cur, dumper, 'runtype')
+    tze = timezone('Europe/Amsterdam')
+    dumper['dump_date'] = pd.to_datetime('now')
+    dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
+    dumper.loc[:,'end_time'] = pd.to_datetime(dumper.end_time)
+    dumper.loc[:, 'start_time'] = pd.to_datetime(dumper.start_time)
+    dumper['period'] = pd.to_timedelta((dumper.end_time - dumper.start_time) / \
+        np.timedelta64(1, 'm'), unit='m')
+
+
+    conn, cur = SQL.connect()
+    dumper = Elexon.unit(conn, cur, dumper)
+
+    # split to two table insert dataframes
     BOALF = dumper.loc[dumper.runtype == 'BOALF', :]
-    print(BOALF.head())
+    print(BOALF.head(),BOALF.dtypes)
     # Dump all normal generation data
     dumper = dumper.loc[dumper.runtype != 'BOALF', :]
     # print(dumper.head())
-    dumper['value'] = pd.mean(dumper.value_from, dumper.value_to)
+
+    # get all data to database except BOALF
+    dumper['value'] = dumper[['value_from','value_to']].mean(axis=1)
     dumper = dumper.astype({'value': int})
     dumper = dumper[dumper.value != 0]
     # print(dumper)
 
     # add static data columns
-    dumper['source'] = 'ELEXON'
-    tze = timezone('Europe/Amsterdam')
-    dumper['dump_date'] = pd.to_datetime('now')
-    dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
-    dumper['period'] = (dumper.end_time - dumper.start_time) / \
-        np.timedelta64(1, 'm')
-    print(dumper.head())
-    return
+
+
     # create/open database connection
-    conn, cur = SQL.connect()
+
     exit
     # start = time.time()
     # format/convert columns to database ids etc and check if static data is complete
-    dumper = SQL.common(conn, cur, dumper, 'source')
-    dumper = SQL.common(conn, cur, dumper, 'runtype')
 
-    dumper = Elexon.unit(conn, cur, dumper)
+
 
     # check if new units are available, if yes, gather necessary data
 
     # print(dumper)
-    #SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_generation','unit.generation')
+    SQL.dumpseries(conn, cur, dumper, 'Elexon_unit_generation','unit.generation')
 
     #dump bid offer acceptances in database
+    BOALF = BOALF.astype({'value_from': int, 'value_to': int,'acceptance_id': int,'bo_flag': bool,'rr_instruction_flag': bool,'rr_schedule_flag':bool,'so_flag':bool,'stor_flag':bool})
+    dumper.loc[:,'acceptance_time'] = pd.to_datetime(dumper.acceptance_time)
+    BOALF.rename(columns={'acceptance_time': 'trade_date','acceptance_id':'trade_id','bo_flag':'bo','rr_instruction_flag':'rr_instruction','rr_schedule_flag':'rr_schedule'}, inplace=True)
+    SQL.dumpseries(conn, cur, dumper, 'Elexon_BOALF','unit.BOALF')
 
     os.remove('csv/Elexon_unit_generation_%s.csv' % sys.argv[1])
     # end = time.time()
