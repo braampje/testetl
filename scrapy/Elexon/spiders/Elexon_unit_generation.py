@@ -37,10 +37,12 @@ class unit_generationspider(XMLFeedSpider):
         url = 'https://api.bmreports.com/BMRS/' + TYPE + \
             '/' + VERSION_NUMBER + '?APIKey=' + API_Key
         url = url + '&ServiceType=' + SERVICETYPE + '&SettlementDate=' + \
-            self.STARTDATE + '&NGCBMUnitName=*&SettlementPeriod=38&BMUnitType='
+            self.STARTDATE + '&NGCBMUnitName=*&BMUnitType='
 
         for ut in bMUnitType:
-            yield scrapy.Request(url + ut, self.parse)
+            for i in range(50):
+                sp = i + 1
+                yield scrapy.Request(url + ut + '&SettlementPeriod=' + sp, self.parse)
 
     def __init__(self, *args, **kwargs):
 
