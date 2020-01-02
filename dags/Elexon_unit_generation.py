@@ -14,7 +14,7 @@ default_args = {
 }
 
 dag = DAG(
-    'Elexon_unit_dynamic', default_args=default_args,
+    'Elexon_unit_generation', default_args=default_args,
     schedule_interval='@daily')
 
 t1 = BashOperator(
