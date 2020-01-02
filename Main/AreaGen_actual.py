@@ -34,7 +34,7 @@ dumper = SQL.common(conn, cur, dumper, 'source')
 
 dumper = SQL.Elexontime(dumper)
 
-tze = timezone('Europe/Amsterdam')
+tze = timezone('UTC')
 dumper['dump_date'] = pd.to_datetime('now')
 dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
 dumper['period'] = pd.Timedelta('30 minutes')
