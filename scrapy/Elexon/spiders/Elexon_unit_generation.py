@@ -42,7 +42,7 @@ class unit_generationspider(XMLFeedSpider):
         for ut in bMUnitType:
             for i in range(50):
                 sp = i + 1
-                yield scrapy.Request(url + ut + '&SettlementPeriod=' + sp, self.parse)
+                yield scrapy.Request(url + ut + '&SettlementPeriod=' + str(sp), self.parse)
 
     def __init__(self, *args, **kwargs):
 
