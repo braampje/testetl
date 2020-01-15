@@ -33,7 +33,7 @@ conn, cur = SQL.connect()
 # fill columns  source_id, dump_date,start_time,period,border_id
 dumper = SQL.common(conn, cur, dumper, 'source')
 
-tze = timezone('Europe/Amsterdam')
+tze = timezone('UTC')
 dumper['dump_date'] = pd.to_datetime('now')
 dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
 
