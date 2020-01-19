@@ -32,7 +32,7 @@ class unit_generationspider(XMLFeedSpider):
         API_Key = '9urjhfmw814sqhn'
         TYPE = 'PHYBMDATA'
         SERVICETYPE = 'XML'
-        bMUnitType = ['E', 'S', 'T']
+        bMUnitType = ['E', 'S', 'T', 'I', 'G']
 
         url = 'https://api.bmreports.com/BMRS/' + TYPE + \
             '/' + VERSION_NUMBER + '?APIKey=' + API_Key
