@@ -32,21 +32,25 @@ def main():
 
     # split to two table insert dataframes
     BOALF = dumper.loc[dumper.runtype == 'BOALF', :]
+    consumption = dumper.loc[(dumper.unit_type == 'G') & (dumper.runtype != 'BOALF'), :]
     # Dump all normal generation data
-    dumper = dumper.loc[dumper.runtype != 'BOALF', :]
+    dumper = dumper.loc[(dumper.runtype != 'BOALF') & (dumper.unit_type != 'G'), :]
     # print(dumper.head())
 
-    # get all data to database except BOALF
+    # get all generation data to database except BOALF
     dumper['value'] = dumper[['value_from', 'value_to']].mean(axis=1)
     dumper = dumper.astype({'value': int})
     dumper = dumper[dumper.value != 0]
     # print(dumper)
 
+    consumption['value'] = consumption[['value_from', 'value_to']].mean(axis=1)
+    consumption = consumption.astype({'value': int})
+    consumption = consumption[consumption.value != 0]
     # add static data columns
 
     # create/open database connection
 
-    exit
+    # exit
     # start = time.time()
     # format/convert columns to database ids etc and check if static data is complete
 
@@ -56,6 +60,8 @@ def main():
     SQL.dumpseries(conn, cur, dumper,
                    'Elexon_unit_generation', 'unit.generation')
 
+    SQL.dumpseries(conn, cur, consumption,
+                   'Elexon_unit_consumption', 'unit.consumption')
     # dump bid offer acceptances in database
 
     BOALF.loc[:, ['bo_flag', 'rr_instruction_flag', 'rr_schedule_flag',
