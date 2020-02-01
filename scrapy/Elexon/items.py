@@ -111,3 +111,15 @@ class unit_generation(scrapy.Item):
     rr_instruction_flag = scrapy.Field()
     rr_schedule_flag = scrapy.Field()
     pass
+
+
+class bsad(scrapy.Item):
+    Date = scrapy.Field()
+    Period = scrapy.Field()
+    Action_cost = scrapy.Field()
+    Action_volume = scrapy.Field()
+    Action_id = scrapy.Field()
+    active_flag = scrapy.Field()
+    so_flag = scrapy.Field()
+    stor_flag = scrapy.Field()
+    pass
