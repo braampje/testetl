@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.spiders import XMLFeedSpider
-from Elexon.items import unit_generation
+from Elexon.items import bsad
 import os
 from datetime import date, timedelta
 from dateutil.parser import parse
