@@ -53,12 +53,13 @@ class bsad_spider(XMLFeedSpider):
 
     def parse_node(self, response, node):
         item = bsad()
-        item['runtype'] = node.xpath('recordType/text()').extract()
-        item['unit'] = node.xpath('ngcBMUnitName/text()').extract()
-        item['bmunitid'] = node.xpath('bmUnitID/text()').extract()
-        item['company'] = node.xpath('leadPartyName/text()').extract()
-        item['unit_type'] = node.xpath('bMUnitType/text()').extract()
-        item['start_time'] = node.xpath('timeFrom/text()').extract()
-        item['end_time'] = node.xpath('timeTo/text()').extract()
+        item['Date'] = node.xpath('settDate/text()').extract()
+        item['Period'] = node.xpath('settlementPeriod/text()').extract()
+        item['cost'] = node.xpath('cost/text()').extract()
+        item['volume'] = node.xpath('volume/text()').extract()
+        item['action_id'] = node.xpath('id/text()').extract()
+        item['active_flag'] = node.xpath('activeFlag/text()').extract()
+        item['so_flag'] = node.xpath('soFlag/text()').extract()
+        item['stor_flag'] = node.xpath('bsaaSTORProviderFlag/text()').extract()
         #print(True if not node.xpath('qpnLevelFrom/text()').extract() else False)
         return item
