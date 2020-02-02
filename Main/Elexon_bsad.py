@@ -23,7 +23,7 @@ def main():
     dumper['dump_date'] = pd.to_datetime('now')
     dumper['dump_date'] = dumper.dump_date.dt.tz_localize(tze)
     dumper['period'] = pd.Timedelta('30 minutes')
-    dumper = SQL.Elexontime(dumper)
+    dumper = SQL.Elexontime(dumper,format_date='%Y-%m-%d')
 
     dumper.loc[:, ['active_flag',
                   'so_flag', 'stor_flag']] = dumper.loc[:, ['active_flag', 'so_flag', 'stor_flag']].replace(to_replace=['T', 'F'], value=[True, False])

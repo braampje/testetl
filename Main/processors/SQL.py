@@ -178,11 +178,11 @@ def common_border(conn, cur, data, table_name):
     return data
 
 
-def Elexontime(data):
+def Elexontime(data,format_date='%Y%m%d'):
     # transform Elexon period to start_time(UKtimezone)
     tz = timezone('Europe/London')
 
-    data['Date'] = pd.to_datetime(data['Date'].astype(str), format='%Y%m%d')
+    data['Date'] = pd.to_datetime(data['Date'].astype(str), format=format_date)
 
     data['start_time'] = data.Date.dt.tz_localize(tz)
     data['start_time'] = data.start_time.dt.tz_convert(timezone('UTC'))
