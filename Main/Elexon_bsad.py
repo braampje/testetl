@@ -14,7 +14,7 @@ from tempfile import NamedTemporaryFile
 
 
 def main():
-    dumper = pd.read_csv('csv/bsad_%s.csv' % sys.argv[1])
+    dumper = pd.read_csv('csv/Elexon_bsad_%s.csv' % sys.argv[1])
     conn, cur = SQL.connect()
     # transform all mutual columns
     dumper['source'] = 'ELEXON'
