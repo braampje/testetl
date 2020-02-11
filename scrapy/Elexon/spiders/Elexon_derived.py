@@ -35,7 +35,7 @@ class derived_spider(XMLFeedSpider):
 
         url = 'https://api.bmreports.com/BMRS/' + TYPE + \
             '/' + VERSION_NUMBER + '?APIKey=' + API_Key
-        url = url + '&ServiceType=' + SERVICETYPE + '&SettlementDate=' + \
+        url = url + '&ServiceType=' + SERVICETYPE + '&SettlementPeriod=*&SettlementDate=' + \
             self.STARTDATE
 
         yield scrapy.Request(url, self.parse)
