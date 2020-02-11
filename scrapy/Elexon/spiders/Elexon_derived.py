@@ -49,7 +49,7 @@ class derived_spider(XMLFeedSpider):
             os.remove('../Main/csv/Elexon_derived_' +
                       self.STARTDATE + '.csv')
 
-        super(bsad_spider, self).__init__(*args, **kwargs)
+        super(derived_spider, self).__init__(*args, **kwargs)
 
     def parse_node(self, response, node):
         item = derived()
