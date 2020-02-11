@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.spiders import XMLFeedSpider
-from Elexon.items import bid_offer
+from Elexon.items import bidoffer
 import os
 from datetime import date, timedelta
 from dateutil.parser import parse
@@ -32,7 +32,7 @@ class bidoffer_spider(XMLFeedSpider):
         API_Key = '9urjhfmw814sqhn'
         TYPE = 'BOD'
         SERVICETYPE = 'XML'
-        bMUnitType  = ['*']  # ['E', 'S', 'T', 'I', 'G']
+        bMUnitType = ['*']  # ['E', 'S', 'T', 'I', 'G']
 
         url = 'https://api.bmreports.com/BMRS/' + TYPE + \
             '/' + VERSION_NUMBER + '?APIKey=' + API_Key
