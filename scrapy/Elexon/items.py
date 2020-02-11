@@ -123,3 +123,15 @@ class bsad(scrapy.Item):
     so_flag = scrapy.Field()
     stor_flag = scrapy.Field()
     pass
+
+
+class derived(scrapy.Item):
+    Date = scrapy.Field()
+    Period = scrapy.Field()
+    cost = scrapy.Field()
+    volume = scrapy.Field()
+    action_id = scrapy.Field()
+    active_flag = scrapy.Field()
+    so_flag = scrapy.Field()
+    stor_flag = scrapy.Field()
+    pass
