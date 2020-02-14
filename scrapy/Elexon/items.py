@@ -138,20 +138,13 @@ class derived(scrapy.Item):
 
 
 class bidoffer(scrapy.Item):
-    runtype = scrapy.Field()
     unit = scrapy.Field()
     bmunitid = scrapy.Field()
-    company = scrapy.Field()
     unit_type = scrapy.Field()
     start_time = scrapy.Field()
-    end_time = scrapy.Field()
-    value_from = scrapy.Field()
-    value_to = scrapy.Field()
-    acceptance_id = scrapy.Field()
-    acceptance_time = scrapy.Field()
-    bo_flag = scrapy.Field()
-    so_flag = scrapy.Field()
-    stor_flag = scrapy.Field()
-    rr_instruction_flag = scrapy.Field()
-    rr_schedule_flag = scrapy.Field()
+    bidoffer_id = scrapy.Field()
+    volume_from = scrapy.Field()
+    volume_to = scrapy.Field()
+    bid = scrapy.Field()
+    offer = scrapy.Field()
     pass

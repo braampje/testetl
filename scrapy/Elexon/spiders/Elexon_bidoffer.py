@@ -32,7 +32,7 @@ class bidoffer_spider(XMLFeedSpider):
         API_Key = '9urjhfmw814sqhn'
         TYPE = 'BOD'
         SERVICETYPE = 'XML'
-        bMUnitType = ['*']  # ['E', 'S', 'T', 'I', 'G']
+        bMUnitType = ['*']
 
         url = 'https://api.bmreports.com/BMRS/' + TYPE + \
             '/' + VERSION_NUMBER + '?APIKey=' + API_Key
@@ -57,39 +57,14 @@ class bidoffer_spider(XMLFeedSpider):
 
     def parse_node(self, response, node):
         item = bidoffer()
-        item['runtype'] = node.xpath('recordType/text()').extract()
         item['unit'] = node.xpath('ngcBMUnitName/text()').extract()
         item['bmunitid'] = node.xpath('bmUnitID/text()').extract()
-        item['company'] = node.xpath('leadPartyName/text()').extract()
         item['unit_type'] = node.xpath('bMUnitType/text()').extract()
         item['start_time'] = node.xpath('timeFrom/text()').extract()
-        item['end_time'] = node.xpath('timeTo/text()').extract()
-        #print(True if not node.xpath('qpnLevelFrom/text()').extract() else False)
-        if node.xpath('pnLevelFrom/text()').extract():
-            item['value_from'] = node.xpath('pnLevelFrom/text()').extract()
-            item['value_to'] = node.xpath('pnLevelTo/text()').extract()
-        elif node.xpath('qpnLevelFrom/text()').extract():
-            item['value_from'] = node.xpath('qpnLevelFrom/text()').extract()
-            item['value_to'] = node.xpath('qpnLevelTo/text()').extract()
-        elif node.xpath('melLevelFrom/text()').extract():
-            item['value_from'] = node.xpath('melLevelFrom/text()').extract()
-            item['value_to'] = node.xpath('melLevelTo/text()').extract()
-        elif node.xpath('milLevelFrom/text()').extract():
-            item['value_from'] = node.xpath('milLevelFrom/text()').extract()
-            item['value_to'] = node.xpath('milLevelTo/text()').extract()
-        elif node.xpath('bidOfferLevelFrom/text()').extract():
-            item['value_from'] = node.xpath(
-                'bidOfferLevelFrom/text()').extract()
-            item['value_to'] = node.xpath('bidOfferLevelTo/text()').extract()
-            item['acceptance_id'] = node.xpath(
-                'bidOfferAcceptanceNumber/text()').extract()
-            item['acceptance_time'] = node.xpath(
-                'acceptanceTime/text()').extract()
-            item['bo_flag'] = node.xpath('deemedBidOfferFlag/text()').extract()
-            item['so_flag'] = node.xpath('soFlag/text()').extract()
-            item['stor_flag'] = node.xpath('storProviderFlag/text()').extract()
-            item['rr_instruction_flag'] = node.xpath(
-                'rrInstructionFlag/text()').extract()
-            item['rr_schedule_flag'] = node.xpath(
-                'rrScheduleFlag/text()').extract()
+
+        item['bidoffer_id'] = node.xpath('bidOfferPairNumber/text()').extract()
+        item['volume_from'] = node.xpath('bidOfferLevelFrom/text()').extract()
+        item['volume_to'] = node.xpath('bidOfferLevelTo/text()').extract()
+        item['bid'] = node.xpath('bidPrice/text()').extract()
+        item['offer'] = node.xpath('offerPrice/text()').extract()
         return item
