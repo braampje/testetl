@@ -18,6 +18,8 @@ FEED_URI = {
 	'URI scheme': 'file'
 }
 
+LOG_LEVEL = 'INFO'
+
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 # ITEM_PIPELINES = {
