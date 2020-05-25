@@ -19,7 +19,8 @@ def unit(conn, cur, dumper):
                      'G': 5,
                      'E': 5,
                      'I': 8,
-                     'T': 5}
+                     'T': 5,
+                     'V': 7}
 
         dumper['unit_type'].replace(unit_type, inplace=True)
         dumper.rename(columns={'unit_type': 'unit_function_id'}, inplace=True)
